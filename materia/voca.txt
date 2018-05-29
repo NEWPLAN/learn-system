@@ -1,0 +1,85 @@
+abc----n. 最基本的事物----/static/materia/horse.mp3
+baby----n. 小孩子----/static/materia/horse.mp3
+copy----v. 抄袭----/static/materia/horse.mp3
+dog----n. 狗狗----/static/materia/horse.mp3
+element----adv. 元素周期表----/static/materia/horse.mp3
+food----n. 吃的----/static/materia/horse.mp3
+google----adv. google----/static/materia/horse.mp3
+haha----adv. hush----/static/materia/horse.mp3
+interesting----adj. 有趣的小东西----/static/materia/horse.mp3
+jacket----adv. jack----/static/materia/horse.mp3
+killo----adv. 千变万化----/static/materia/horse.mp3
+worker----工人----/static/materia/horse.mp3
+physical labourer----体力劳动者----/static/materia/horse.mp3
+mental worker----脑力劳动者----/static/materia/horse.mp3
+skilled worker----熟练工人----/static/materia/horse.mp3
+unskilled worker----非熟练工人----/static/materia/horse.mp3
+steel worker----钢铁工人----/static/materia/horse.mp3
+textile-worker----纺织工人----/static/materia/horse.mp3
+miner----矿工----/static/materia/horse.mp3
+mechanic----机工,技工----/static/materia/horse.mp3
+driver----汽车司机----/static/materia/horse.mp3
+engine-driver----火车司机----/static/materia/horse.mp3
+electrician----电工,电气技师----/static/materia/horse.mp3
+sailor----水手----/static/materia/horse.mp3
+gardener----园丁,花匠,菜农----/static/materia/horse.mp3
+forger----锻工----/static/materia/horse.mp3
+turner----车工,镟工----/static/materia/horse.mp3
+fitter----装配钳工----/static/materia/horse.mp3
+caster----铸工----/static/materia/horse.mp3
+foundry-worker----铸造工人,翻砂工人----/static/materia/horse.mp3
+painter----油漆工----/static/materia/horse.mp3
+plumber----管子工----/static/materia/horse.mp3
+bricklayer----砌砖工----/static/materia/horse.mp3
+carpenter----木匠,木工(尢指粗木工)----/static/materia/horse.mp3
+joiner----细木工----/static/materia/horse.mp3
+sanitation-worker----环卫工人,清洁工----/static/materia/horse.mp3
+switchman----扳道工----/static/materia/horse.mp3
+chef----主厨----/static/materia/horse.mp3
+cook----厨师----/static/materia/horse.mp3
+salesman----男售货员,男推销员----/static/materia/horse.mp3
+saleswoman----女售货员,女推销员----/static/materia/horse.mp3
+coppersmith----铜匠,铜器制造人----/static/materia/horse.mp3
+blacksmith----铁匠,锻工----/static/materia/horse.mp3
+miller----铣工----/static/materia/horse.mp3
+planer----刨工----/static/materia/horse.mp3
+welder----焊工----/static/materia/horse.mp3
+printer----印刷工人----/static/materia/horse.mp3
+ship-builder----造船工人----/static/materia/horse.mp3
+porter----搬运行李工人----/static/materia/horse.mp3
+docker----码头工人,船坞工人----/static/materia/horse.mp3
+stevedore----码头工人,装卸工----/static/materia/horse.mp3
+longshoreman----码头搬运工人----/static/materia/horse.mp3
+driller----钻控工,打眼工----/static/materia/horse.mp3
+builder----建筑工人----/static/materia/horse.mp3
+meson----石匠----/static/materia/horse.mp3
+tailor----裁缝,缝工,成衣工----/static/materia/horse.mp3
+spinner----纺纱工----/static/materia/horse.mp3
+probationer----试用人员,练习生----/static/materia/horse.mp3
+engineer----工程师,技师----/static/materia/horse.mp3
+designer----设计师----/static/materia/horse.mp3
+doctor----医生,医帅,大夫----/static/materia/horse.mp3
+pilot----驾驶员,飞行员,领航员,----/static/materia/horse.mp3
+stewardess----空中小姐----/static/materia/horse.mp3
+captain----船长,机长----/static/materia/horse.mp3
+professor----教授----/static/materia/horse.mp3
+lecturer----讲师----/static/materia/horse.mp3
+teacher----教师----/static/materia/horse.mp3
+president----大学校长,大学院长,总统,董事长----/static/materia/horse.mp3
+headmaster----中小学的男校长----/static/materia/horse.mp3
+headmistress----中小学的女校长----/static/materia/horse.mp3
+artist----艺术家,美术家----/static/materia/horse.mp3
+painter----画家----/static/materia/horse.mp3
+musician----音乐家----/static/materia/horse.mp3
+violinist----小提琴手----/static/materia/horse.mp3
+pianist----钢琴家----/static/materia/horse.mp3
+singer----歌唱家----/static/materia/horse.mp3
+songster----歌手----/static/materia/horse.mp3
+decorator----室内装饰师----/static/materia/horse.mp3
+sportsman----运动家,运动员----/static/materia/horse.mp3
+coach----教练----/static/materia/horse.mp3
+referee----足球等的裁判员----/static/materia/horse.mp3
+scorekeeper----记分员----/static/materia/horse.mp3
+lawyer----律师----/static/materia/horse.mp3
+businessman----实业家,商人----/static/materia/horse.mp3
+tradesman----零售商人,小商人----/static/materia/horse.mp3

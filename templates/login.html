@@ -1,0 +1,319 @@
+$def with ()
+
+<DOCTYPE html>  
+<html>  
+<head>
+<link rel="stylesheet" type="text/css" href="static/css/main.css"> 
+
+
+<style>
+.divAlert{
+    width:800px;
+    border: 2px solid #37B6D1;
+    font-weight: bold;
+    font-size: 20px;
+    background-color: #fff;
+}
+.divAlert_Title
+{ 
+    line-height:25px; 
+    padding:10px 5px; 
+    background-color: #37B6D1;
+}
+.divAlert_Content
+{
+    background-color: #fff; 
+    font-weight: normal;
+    font-size: 16px;
+    padding:20px 0px; 
+    text-align:left;
+}
+.divAlert_Btn
+{ 
+    text-align:center; 
+    padding:0px 0px 20px;
+    background-color: #fff;  
+}
+.btnSure{ 
+    border:1px solid #CCC; 
+    background-color:#CCC; 
+    width:50px; 
+    height:25px;
+}
+
+</style>
+
+<script language="javascript" type="text/javascript">
+    function msgbox(title,content,func,cancel,focus,icon){
+        /*      
+        参数列表说明:
+        title :弹出对话框的标题,标题内容最好在25个字符内,否则会导致显示图片的异常                                                          
+        text  :弹出对话框的内容,可以使用HTML代码,例如<font color='red'>删除么?</font>,如果直接带入函数,注意转义
+        func  :弹出对话框点击确认后执行的函数,需要写全函数的引用,例如add(),如果直接带入函数,注意转义。
+        cancel:弹出对话框是否显示取消按钮,为空的话不显示,为1时显示
+        focus :弹出对话框焦点的位置,0焦点在确认按钮上,1在取消按钮上,为空时默认在确认按钮上
+        icon  :弹出对话框的图标
+        */  
+        //icon="msgbox_"+icon+".png";
+        create_mask();
+        var temp="<div class=\"divAlert\" >"
+                +"<div class=\"divAlert_Title\">"+title+"</div>"
+                +"<table  cellspacing=\"0\" border=\"0\"><tr><td style=\" padding:0px 0px 0px 20px; \"></td>"
+                +"<td ><div class=\"divAlert_Content\">"+content
+                +"</div></td></tr></table><br></br></br>"
+                +"<div class=\"divAlert_Btn\"><input type='button' class=\"btnSure\" value='同意'id=\"msgconfirmb\" onclick=\"remove();"+func+";\">";
+        if(null!=cancel)
+            {
+                temp+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' class=\"btnSure\" value='拒绝'  id=\"msgcancelb\"   onClick='remove()'>";
+            }
+        temp+="</div></div>";
+        create_msgbox(800,600,temp);
+        if(focus==0||focus=="0"||null==focus){document.getElementById("msgconfirmb").focus();}
+        else if(focus==1||focus=="1"){document.getElementById("msgcancelb").focus();}           
+    }
+    function get_width(){
+        return (document.body.clientWidth+document.body.scrollLeft);
+    }
+    function get_height(){
+        return (document.body.clientHeight+document.body.scrollTop);
+    }
+    function get_left(w){
+        var bw=document.body.clientWidth;
+        var bh=document.body.clientHeight;
+        w=parseFloat(w);
+        return (bw/2-w/2+document.body.scrollLeft);
+    }
+    function get_top(h){
+        var bw=document.body.clientWidth;
+        var bh=document.body.clientHeight;
+        h=parseFloat(h);
+        return (bh/2-h/2+document.body.scrollTop);
+    }
+    function create_mask(){//创建遮罩层的函数
+        var mask=document.createElement("div");
+        mask.id="mask";
+        mask.style.position="absolute";
+        mask.style.filter="progid:DXImageTransform.Microsoft.Alpha(style=4,opacity=25)";//IE的不透明设置
+        mask.style.opacity=0.4;//Mozilla的不透明设置
+        mask.style.background="black";
+        mask.style.top="0px";
+        mask.style.left="0px";
+        mask.style.width=get_width();
+        mask.style.height=get_height();
+        mask.style.zIndex=1000;
+        document.body.appendChild(mask);
+    }
+    function create_msgbox(w,h,t){//创建弹出对话框的函数
+        var box=document.createElement("div")   ;
+        box.id="msgbox";
+        box.style.position="absolute";
+        box.style.width=w;
+        box.style.height=h;
+        box.style.overflow="visible";
+        box.innerHTML=t;
+        box.style.zIndex=1001;
+        document.body.appendChild(box);
+        re_pos();
+    }
+    function re_mask(){
+        /*
+        更改遮罩层的大小,确保在滚动以及窗口大小改变时还可以覆盖所有的内容
+        */
+        var mask=document.getElementById("mask")    ;
+        if(null==mask)return;
+        mask.style.width=get_width()+"px";
+        mask.style.height=get_height()+"px";
+    }
+    function re_pos(){
+        /*
+        更改弹出对话框层的位置,确保在滚动以及窗口大小改变时一直保持在网页的最中间
+        */
+        var box=document.getElementById("msgbox");
+        if(null!=box){
+            var w=box.style.width;
+            var h=box.style.height;
+            box.style.left=get_left(w)+"px";
+            box.style.top=get_top(h)+"px";
+        }
+    }
+    function remove(){
+        /*
+        清除遮罩层以及弹出的对话框
+        */
+        var mask=document.getElementById("mask");
+        var msgbox=document.getElementById("msgbox");
+        if(null==mask&&null==msgbox)return;
+        document.body.removeChild(mask);
+        document.body.removeChild(msgbox);
+        document.getElementById('_decleare').innerHTML='(点击)重新阅读声明';
+    }
+    
+    function re_show(){
+        /*
+        重新显示遮罩层以及弹出窗口元素
+        */
+        re_pos();
+        re_mask();  
+    }
+    function load_func(){
+        /*
+        加载函数,覆盖window的onresize和onscroll函数
+        */
+        window.onresize=re_show;
+        window.onscroll=re_show;    
+    }
+
+</script>
+
+<meta charset="UTF-8">  
+<title>Login</title>  
+</head>  
+<body>
+	<div >
+</div>
+
+<div id="main" class="main">
+
+    <!-- 头部信息 -->
+    <div class="body_header" >
+        <p style="display: table-cell; color:#FFFFFF;">Login for Test</p>
+    </div>
+
+    <!-- 身体信息 -->
+    <div id="bodysss" style="display: block; height: 73%; width: 100% margin:auto; text-align:center;">
+    <div id="_decleare" style="display: block; color:#FFFFFF;width: 100%; padding-top: 2%;padding-bottom: 2%; text-align: center; color: red;background: #F0F0F0F0;" onclick="declare()">
+        阅读声明
+        </div>
+
+        <div class="form_info" style="font-size: 20px; width: 80%;margin-left: auto;margin-right: auto;">
+
+		<form action="/login" method="POST" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto;">
+			<table style="margin-left: auto;margin-right: auto; width: 100%; text-align: center;" >
+			    <tr>
+                    <td class="voca_label">用户名</td>
+                    <td><input class="input_label" type="text" name="uid" id="uid" /></td>
+                </tr>
+			    <tr>
+                    <td class="voca_label">专 业</td>
+                    <td><input class="input_label" type="text" name="maj" id= "maj" /></td>
+                </tr>
+			    <tr>
+                    <td class="voca_label">年 龄</td>
+                    <td><input class="input_label" type="number" name="age" id="age" /></td>
+                </tr>
+			    <tr>
+                    <td class="voca_label">性 别</td>
+                    <td>
+                        <select class="input_label" name="gend" style="width: 49%" id="gend" > 
+                            <option >男</option>
+                            <option >女</option>
+                            <option >其他</option>
+                        </select>
+                    </td>
+                </tr>
+			    <tr>
+                    <td class="voca_label">年 级</td>
+                    <td>
+                        <select class="input_label" name="grad" style="width: 49%" id="grad">
+                            <option >大一</option>
+                            <option >大二</option>
+                            <option >大三</option>
+                            <option >大四</option>
+                            <option >研一</option>
+                            <option >研二</option>
+                            <option >研三</option>
+                            <option >其他</option>
+                        </select> 
+                    </td>
+                </tr>
+			</table>
+			<div style="padding-top: 5%;"><input type="submit" value="提交个人信息"  onclick="return check(this.form);" style="border:1px solid #CCC; background-color:#CCC; font-size: 20px;" id="sub"/>
+			</div>
+		</form>
+        </div>
+
+    </div>
+
+<script type="text/javascript">
+
+
+var count=0;
+//set_visibale(0);
+function check(form)
+{
+    var alert_info='';
+    var alert_cond=false;
+    if(form.uid.value==''||form.uid.value.length==0)
+    {
+        alert_info+='用户名不能为空\n';
+        alert_cond=true;
+    }
+    if(form.maj.value==''||form.maj.value.length==0)
+    {
+        alert_info+='专业不能为空\n';
+        alert_cond=true;
+    }
+    if(form.age.value==''||form.age.value.length==0)
+    {
+        alert_info+='年龄不能为空\n';
+        alert_cond=true;
+    }
+
+    if(alert_cond)
+    {
+        alert(alert_info);
+        return false;
+    }
+    return true;
+}
+
+
+function hidden_all(disable) 
+{
+    var label_=['uid','age','gend','maj','grad','sub'];
+    for(var index=0;index<label_.length;index++)
+        document.getElementById(label_[index]).disabled=disable;
+    if(!disable)
+    {
+        document.getElementById('_decleare').innerHTML='填写个人信息';
+        document.getElementById("_decleare").onclick = function(){alert('Warning: do not do it again!');};
+    }
+}
+var t=setTimeout('abc()',10);
+hidden_all(true);
+
+var cctime=5;
+
+function abc() 
+{
+    document.getElementById('_decleare').innerHTML='阅读声明（'+cctime+'）';
+    if(cctime-- > 0)
+    {
+        clearTimeout(t);
+        t=setTimeout('abc()',1000);
+    }
+    else
+    {
+        declare();
+    }
+    
+    // body...
+}
+//declare();
+function declare() 
+{
+    clearTimeout(t);
+    msgbox('联合声明','<b>Dear friends</b>,</br></br>&nbsp;&nbsp;Welcome you join us for this survey and test. This is a declearing you may need to know before get ready for our test. This is a personal organization activity.</br></br>&nbsp;&nbsp;......</br></br>&nbsp;&nbsp;click the left button to reject and right one to <span style="color: red;">accept</span> it!','hidden_all(false);',1,1,'Warning');
+    // body...
+}
+
+</script>
+
+
+    <div id="foot_print" class="foot_print">
+        为了曹阳同学的毕业设计添砖加瓦！
+    </div>
+
+</div> 
+</body>  
+</html>

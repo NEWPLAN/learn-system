@@ -1,0 +1,68 @@
+$def with (vocal_info,uid,time_delay)
+
+<DOCTYPE html>  
+<html>  
+<head>
+<link rel="stylesheet" type="text/css" href="static/css/main.css"> 
+
+<meta charset="UTF-8">  
+<title>test</title>  
+</head>  
+<body>
+	<div>
+		
+	</div>
+
+<div id="main" class="main">
+
+    <!-- 头部信息 -->
+    <div class="body_header" >
+        <p style="display: table-cell; color:#FFFFFF;">单词小测试</p>
+    </div>
+
+    <!-- 身体信息 -->
+    <div id="bodysss" style="display: block; height: 73%; width: 100% margin:auto; text-align:center;">
+    <div style="display: block; color:#FFFFFF;width: 100%; padding-top: 2%;padding-bottom: 2%; text-align: right;">
+        <marquee class='dynamic_notify'>请在对应的释义后写出对应的单词，限时30s</marquee>
+        </div>
+
+        <div class="form_info" style="font-size: 20px; width: 80%;margin-left: auto;margin-right: auto;">
+
+		<form id="myForm" action="/next" method="POST" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto;">
+			<table style="margin-left: auto;margin-right: auto; width: 100%; text-align: center;">
+			    <tr><td class="voca_label">$vocal_info[0][1]</td><td><input class="input_label" type="text" name="voc_1" /></td></tr>
+			    <tr><td class="voca_label">$vocal_info[1][1]</td><td><input class="input_label" type="text" name="voc_2" /></td></tr>
+			    <tr><td class="voca_label">$vocal_info[2][1]</td><td><input class="input_label" type="text" name="voc_3" /></td></tr>
+			    <tr><td class="voca_label">$vocal_info[3][1]</td><td><input class="input_label" type="text" name="voc_4" /></td></tr>
+			    <tr><td class="voca_label">$vocal_info[4][1]</td><td><input class="input_label" type="text" name="voc_5" /></td></tr>
+                <tr style="display: none;"><td class="voca_label">extra info</td><td><input class="input_label" type="hidden"  name="uid" value="$uid" /></td></tr>
+			</table>
+			<div style="padding-top: 5%;"><input type="submit" value="提交答案" style="font-size: 20px;" />
+			</div>
+		</form>
+        </div>
+
+    </div>
+
+<script type="text/javascript">
+//setTimeout("submit();",3000);
+
+
+function submit_() 
+{
+    //alert('going to submit form');
+    document.getElementById("myForm").submit();
+    // body...
+}
+setTimeout("submit_()",$time_delay);
+
+</script>
+
+
+    <div id="foot_print" class="foot_print">
+        为了曹阳同学的毕业设计添砖加瓦！
+    </div>
+
+</div> 
+</body>  
+</html>
