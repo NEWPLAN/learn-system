@@ -25,6 +25,7 @@ $def with (vocal_info,uid,time_delay)
     <div style="display: block; color:#FFFFFF;width: 100%; padding-top: 2%;padding-bottom: 2%; text-align: right;">
         <marquee class='dynamic_notify'>请在对应的释义后写出对应的单词，限时30s</marquee>
         </div>
+        <div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>
 
         <div class="form_info" style="font-size: 20px; width: 80%;margin-left: auto;margin-right: auto;">
 
@@ -37,15 +38,43 @@ $def with (vocal_info,uid,time_delay)
 			    <tr><td class="voca_label">$vocal_info[4][1]</td><td><input class="input_label" type="text" name="voc_5" /></td></tr>
                 <tr style="display: none;"><td class="voca_label">extra info</td><td><input class="input_label" type="hidden"  name="uid" value="$uid" /></td></tr>
 			</table>
-			<div style="padding-top: 5%;"><input type="submit" value="提交答案" style="font-size: 20px;" />
+            <div style="display: block;width: 100%;height: 60px;"><!-- padding info will not display --></div>
+			<div style="padding-top: 1%;"><input id="bton" disabled=true type="submit" value="提交答案( $time_delay s )" style="border:1px solid #CCC; background-color:#CCC; font-size: 20px; width: 40%; height: 40px;" />
 			</div>
 		</form>
         </div>
+        <div style="display: block;width: 100%;height: 30px;"><!-- padding info will not display --></div>
 
     </div>
 
 <script type="text/javascript">
 //setTimeout("submit();",3000);
+
+var myDate = new Date();
+
+var last_click=myDate.getTime();
+
+
+var letf_time=$time_delay;
+var origin_time=$time_delay;
+
+
+function enable_click() 
+{
+    document.getElementById('bton').disabled=false;
+    // body...
+}
+
+setTimeout('enable_click()',5000);
+change_display();
+function change_display()
+{
+    document.getElementById('bton').value='提交答案( '+letf_time+' s )';
+    if(--letf_time==-10)
+        submit_();
+    setTimeout("change_display()",1000);
+}
+
 
 
 function submit_() 
@@ -54,7 +83,7 @@ function submit_()
     document.getElementById("myForm").submit();
     // body...
 }
-setTimeout("submit_()",$time_delay);
+setTimeout("submit_()",$time_delay*1000);
 
 </script>
 

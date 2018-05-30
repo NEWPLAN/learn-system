@@ -11,34 +11,41 @@ body
 }   
 .main
 {   
+    position:absolute;
+    /*left:0;*/
+    top:0;
     width:80%; 
-    height:80%; 
+    /*height:80%;*/ 
     text-align: center; 
     margin:10 auto; 
     margin-top: 5%;
-    margin-bottom: 3%;  
+    margin-bottom: 3%;
+    overflow-y:scroll;
+    overflow:hidden;
+    /*height: 73%;*/
 }
 
 .body_header
 {
     display: block; 
-    height: 10%; 
-    width: 98%; 
+    height: 45px; 
+    width: 100%; 
     background:#1F9E85; 
     text-align: left; 
-    vertical-align:middle; 
-    padding-top:2%; 
-    padding-left: 2%;
+    padding: 15px;
+    color:#FFFFFF;
+    /*padding-top:2%; 
+    padding-left: 2%;*/
 }
 .foot_print
 {
     display: block;
     width: 100%;
-    background:green;
+    height: 18px;
     color:#FFFFFF;
-    padding-top: 1%;
-    padding-bottom: 1%;
-    font-size: 15px;
+    padding-top: 0.5%;/*
+    padding-bottom: 1%;*/
+    font-size: 10px;
     background: #1F9E85;
 }
 

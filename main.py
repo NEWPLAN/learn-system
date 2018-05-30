@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 import web
 import random
 
@@ -18,7 +21,7 @@ vocas=[]
 def load_voca():
     global vocas;
     with open('materia/voca.txt','rb') as fb:
-        voca_row=fb.read().replace('\r','')
+        voca_row=fb.read().encode("utf-8").replace('\r','')
         _vocas=voca_row.split('\n')
         for voca in _vocas:
             each_item=voca.split('----');
@@ -88,13 +91,13 @@ def learn(uid):
         vvv=[]
         for var in user_info[uid]['on_learn']:
             vvv.append(vocas[var])
-        return render.test(vvv, uid, 30*1000)
+        return render.test(vvv, uid, 30)
 
     this_index=random.randint(0,len(user_info[uid]['unfin'])-1)
     this_var=user_info[uid]['unfin'][this_index]
     user_info[uid]['on_learn'].append(this_var)
     user_info[uid]['unfin'].remove(this_var)
-    return render.learn(vocas[this_var], 10*1000, uid);
+    return render.learn(vocas[this_var], 10, uid);
 
 
 
@@ -155,18 +158,67 @@ class next:
         return learn(data['uid'])
 
 
-    def POST(self,name):
+    def POST(self,name):#special work for test
         print('in post function name=',name)
         data=web.input();
 
-        print(data['uid'])
+        print type(data['voc_1'].encode("utf-8")), data['voc_1'],'-----', vocas[user_info[data['uid']]['on_learn'][0]]
+        print type(data['voc_1'].encode("utf-8")), data['voc_2'],'-----', vocas[user_info[data['uid']]['on_learn'][1]]
+        print type(data['voc_1'].encode("utf-8")), data['voc_3'],'-----', vocas[user_info[data['uid']]['on_learn'][2]]
+        print type(data['voc_1'].encode("utf-8")), data['voc_4'],'-----', vocas[user_info[data['uid']]['on_learn'][3]]
+        print type(data['voc_1'].encode("utf-8")), data['voc_5'],'-----', vocas[user_info[data['uid']]['on_learn'][4]]
+
+        print(data['uid'].encode("utf-8"))
+
+        current_score=0
+        if data['voc_1'] == vocas[user_info[data['uid']]['on_learn'][0]][0]:
+            user_info[data['uid']]['correct'].append(1)
+            current_score+=1
+        else :
+            user_info[data['uid']]['correct'].append(0)
+
+        if data['voc_2'] == vocas[user_info[data['uid']]['on_learn'][1]][0]:
+            user_info[data['uid']]['correct'].append(1)
+            current_score+=1
+        else :
+            user_info[data['uid']]['correct'].append(0)
+
+        if data['voc_3'] == vocas[user_info[data['uid']]['on_learn'][2]][0]:
+            user_info[data['uid']]['correct'].append(1)
+            current_score+=1
+        else :
+            user_info[data['uid']]['correct'].append(0)
+        
+        if data['voc_4'] == vocas[user_info[data['uid']]['on_learn'][3]][0]:
+            user_info[data['uid']]['correct'].append(1)
+            current_score+=1
+        else :
+            user_info[data['uid']]['correct'].append(0)
+        
+        if data['voc_5'] == vocas[user_info[data['uid']]['on_learn'][4]][0]:
+            user_info[data['uid']]['correct'].append(1)
+            current_score+=1
+        else :
+            user_info[data['uid']]['correct'].append(0)
+
+        total_score= 0
+        for var in user_info[data['uid']]['correct']:
+            total_score+=var
+
+        print current_score,'-----', total_score
+
+        voca_id=user_info[data['uid']]['on_learn'][-1];
+
         user_info[data['uid']]['fin']+=user_info[data['uid']]['on_learn'];
         del user_info[data['uid']]['on_learn'][:];
 
-        print('heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
         print(user_info[data['uid']])
 
-        return render.backward(vocas[random.randint(0,len(vocas)-1)], data['uid']);
+        strr='[[0,\''+data['uid'].encode("utf-8")+'\','+str(current_score)+','+str(total_score)+'],\
+                    [2,\'fake-2\',parseInt(5*Math.random()),parseInt(10*Math.random())+1]]';
+        print strr
+
+        return render.backward(vocas[voca_id][0],strr, data['uid'],15);
 
 
 class confirm:
@@ -180,6 +232,7 @@ class icons:
 		return web.seeother('/static/favicon.ico')
 
 def main():
+    print 'eeeeeeeeeee'
     app.run()
     pass
 

@@ -15,28 +15,27 @@ $def with (vocal_info, time_out,uid)
 <div id="main" class="main">
 
     <!-- 头部信息 -->
-    <div class="body_header" >
-        <p style="display: table-cell; color:#FFFFFF;">单词测试实验</p>
-    </div>
+    <div class="body_header" >单词学习</div>
 
     <!-- 身体信息 -->
-    <div id="bodysss" style="display: block; height: 73%; width: 100% margin:auto">
+    <div id="bodysss" style="display: block; width: 100%; margin:auto; text-align:center;">
+        <div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>
 
-        <div id="left" class="vocabulary" >
-            <div id="voc_id" class="voc_info" style="height: 25%; padding-top: 5%">
+        <div id="left" class="vocabulary_" style="width: 100%; " >
+            <div id="voc_id" class="voc_info" style="height: 80px; padding-top: 5%; ">
                 <div class="item">单词</div>
-                <div id="true_voc" class="value">$vocal_info[0]</div>
+                <div id="true_voc" class="value" >$vocal_info[0]</div>
             </div>
 
-            <div id="voc_explain" class="voc_explain" style="height: 50%; padding-top: 2%">
+            <div id="voc_explain" class="voc_explain" style="height: 200px; padding-top: 2%">
                 <div class="item">解释</div>
                 <div class="value">$vocal_info[1]</div>
             </div>
 
-            <div id="pronunce" class="pronunce" style="height: 25%;">
+            <div id="pronunce" class="pronunce" style="height: 80px; padding-top: 2%">
                 <div class="item" style="width: 45%">
                     <!-- <embed height="100" width="100" src="./materia/horse.mp3"></embed> -->
-                    <audio id="myAudio" controls>
+                    <audio id="myAudio" controls >
                       <!-- <source src="/static/materia/horse.ogg" type="audio/ogg"> -->
                       <!-- <source src="/static/materia/horse.mp3" type="audio/mpeg"> -->
                       <source src="$vocal_info[2]" type="audio/mpeg">
@@ -45,58 +44,75 @@ $def with (vocal_info, time_out,uid)
                 </div>
                 <div style="display: inline; width: 45%;">
                     <!-- <input type="button" value="下一个单词" style="width: 40%; width: 20%" onclick="submit" /> -->
-                    <button style="width: 40%; width: 20%" onclick="get_next()">下一个单词</button>
+                    <button id="bton" disabled=true style="border:1px solid #CCC; background-color:#CCC; width: 30%; height: 35px; font-size: 20px;" onclick="this.disabled=true;get_next()">下一个单词 ( $time_out s )</button>
                 </div>
             </div>
+            <div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>
 
         </div>
 
-        <div id="right" class="rank" >
-        <div style="height: 5% font-size:5px">
-        排行榜
-        </div>
-        <div id="table_rank" class="table_rank" style="height: 80%; text-align: center;">
-        	
-        </div>
-        </div>
     </div>
 
 <script type="text/javascript">
 //setTimeout("submit();",3000);
 console.log('work here');
 //var t= setTimeout("submit()",2000);
-setTimeout("get_next()", $time_out);
+setTimeout("change_display()", 1000);
+var myDate = new Date();
+
+var last_click=myDate.getTime();
+
+var letf_time=$time_out-1;
+var origin_time=$time_out;
+
+function check_double_click() 
+{
+    var myDate = new Date();
+    var current_time=myDate.getTime();
+    if(origin_time-letf_time<2)
+    {
+        //alert('保持页面2分钟');
+        return false;
+    }
+    return true;
+    // body...
+}
+
+function enable_click() 
+{
+    document.getElementById('bton').disabled=false;
+    // body...
+}
+
+setTimeout('enable_click()',2000);
 
 
 
-var count=0;
-set_visibale(0);
+var count=$time_out;
+function change_display()
+{
+    document.getElementById('bton').innerHTML='下一个单词 ( '+letf_time+' s )';
+    if(--letf_time<=0)
+        get_next();
+    setTimeout("change_display()",1000);
+}
 
 function get_next()
 {
+    document.getElementById('bton').disabled=true;
+    var res=1;
+    
+    if(!check_double_click())
+        return;
 	var value = document.getElementById('true_voc').innerHTML;
 	console.log(value);
-	window.location.href='/next?voca_item='+value+'&uid='+$uid;
+	window.location.href='/next?voca_item='+value+'&uid='+'$uid';
 }
- 
-    function set_visibale(count)
-    {
-    	if(count %5==0)
-        {
-        	document.getElementById("right").style.display='None';
-        	document.getElementById("left").style.width='100%';
-        }
-        else
-        {
-        	document.getElementById("left").style.width='65%';
-        	document.getElementById("right").style.display='inline';
-        }
-    }
 
 </script>
 
 
-    <div id="foot_print" class="foot_print">
+    <div id="foot_print" class="foot_print" style="display: block;">
         为了曹阳同学的毕业设计添砖加瓦！
     </div>
 
