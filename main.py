@@ -11,6 +11,7 @@ urls = (
     '/next(.*)', 'next',
     '/login','login',
     '/favicon.ico', 'icons',
+    '/rest', 'rest',
 )
 app = web.application(urls, globals())
 render = web.template.render('templates/')
@@ -142,6 +143,63 @@ class indexhandler:
         return render.index()
         pass
 
+def score(L=[0,0,0,0,0],last_round=5):
+    total_score=0
+    current_score=0
+    for a in L:
+        total_score+=a
+    r=-1
+    for a in range(0,last_round):
+        current_score+=L[r]
+        r-=1
+    return total_score, current_score
+
+class rest:
+    def GET(self,name=None):
+        print 'should not be here anymore.-------------...'
+        return 'should not be here anymore.-------------...'
+
+    def POST(self,name=None):
+        data = web.input()
+        print data['uid']
+        user_group = group[user_info[data['uid']]['group']]['uid']
+        print user_group
+
+        if len(user_group) < 2 :
+            return render.rest([[1,2],[2,3],[3,4],[5,6],[6,7]],data['uid'],60);
+            pass
+
+        jueged=len(user_info[user_group[0]]['correct'])
+        score_all = []
+
+        for var in user_group:
+            if jueged != len(user_info[var]['correct']):
+                return render.rest([[1,2],[2,3],[3,4],[5,6],[6,7]],data['uid'],10);
+            total_score, current_score = score(user_info[var]['correct'])
+            score_all.append([var, current_score, total_score])
+
+        print score_all
+        
+        rank_info='['
+        index=1
+        while len(score_all)!=0:
+            min_score=-1
+            last_one=None
+            for x in score_all:
+                if min_score < x[2]:
+                    last_one=x
+
+            rank_info+='['+str(index)+','+"'"+last_one[0]+"',"+str(last_one[1])+','+str(last_one[2])+'],'
+            index+=1
+            score_all.remove(last_one)
+        #rank_info=str(rank_info)
+        rank_info=rank_info[:-1]+']'
+
+        print rank_info
+
+        return render.backward('nothing',rank_info, data['uid'],15);
+
+
 
 
 class next:
@@ -218,18 +276,17 @@ class next:
                     [2,\'fake-2\',parseInt(5*Math.random()),parseInt(10*Math.random())+1]]';
         print strr
 
-        return render.backward(vocas[voca_id][0],strr, data['uid'],15);
+
+        return render.rest([[1,2],[2,3],[3,4],[5,6],[6,7]],data['uid'],2)
+        #return render.backward(vocas[voca_id][0],strr, data['uid'],15);
 
 
-class confirm:
-    def GET(self):
-        return render.confirm();
 
 class icons:
-	def GET(self,name=None):
-		return web.seeother('/static/favicon.ico')
-	def POST(self,name=None):
-		return web.seeother('/static/favicon.ico')
+    def GET(self,name=None):
+        return web.seeother('/static/favicon.ico')
+    def POST(self,name=None):
+        return web.seeother('/static/favicon.ico')
 
 def main():
     print 'eeeeeeeeeee'
