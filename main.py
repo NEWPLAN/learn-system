@@ -24,6 +24,8 @@ render = web.template.render('templates/')
 vocas = []
 mutex = threading.Lock()
 
+player_num=9
+
 
 def load_voca():
     global vocas;
@@ -49,6 +51,9 @@ def dump_to_file(file_path='result/dump.txt'):
             f.write('&&&-')
             for voca in var['voca']:
                 f.write(str(voca) + '|')
+            f.write('&&&-')
+            for visiable in var['visiable']:
+                f.write(visiable + '|')
             f.write('&&&-%d\n' % var['fin_num'])
 
             for uid in var['uid']:
@@ -87,7 +92,7 @@ def dump_to_file(file_path='result/dump.txt'):
     # print u
     #print user_info
     for user_item in user_info:
-            print '  ',user_item,'-------',user_info[user_item])
+            print '  ',user_item,'-------',user_info[user_item]
     print '------------------------------------------------------Compare done------------------------------------\n\n'
 
 
@@ -105,13 +110,16 @@ def load_from_dump(file_path='result/dump.txt'):
         for index in range(0, group_num):
             new_gr = {}
             cur = f.readline().strip('\n')
-            u_num, uid, voca, fin_num = cur.split('&&&-')
+            u_num, uid, voca, visiable, fin_num = cur.split('&&&-')
+
+            visiable=visiable.split('|')
+            while '' in visiable:
+                visiable.remove('')
+            new_gr['visiable'] = visiable
 
             uid = uid.split('|')
-
             while '' in uid:
                 uid.remove('')
-
             new_gr['uid'] = uid
 
             voca = voca.split('|')
@@ -199,8 +207,9 @@ def batched_voca(nums=20):
 
     if all_nums == 0 or nums <= 0:
         return []
-    if nums<all_nums:
+    if nums<all_nums or nums<5:
         print ('system error in loading vocabulary, you need add more vocabulary before loading...')
+    nums -= nums%5
 
     while selected_num < nums:
         var = random.randint(0, all_nums - 1)
@@ -218,24 +227,33 @@ def check_and_add_user(user_id):
             group[-1]['uid'] = [user_id]
             group[-1]['voca'] = batched_voca();
             group[-1]['fin_num'] = 0
+            group[-1]['visiable'] = []
             index = 0
             available=True
             for v in group[-1]['voca']:
                 index += 1
-        elif ((user_id not in group[-1]['uid']) and (len(group[-1]['uid']) < 4)):
+        elif ((user_id not in group[-1]['uid']) and (len(group[-1]['uid']) < player_num)):
             group[-1]['uid'].append(user_id)
             available=True
+            if len(group[-1]['uid']) == player_num:
+                group[-1]['visiable']=[var for var in group[-1]['uid']]
+                while len(group[-1]['visiable'])*2 > len(group[-1]['uid']):
+                    group[-1]['visiable'].pop(random.randint(0,len(group[-1]['visiable'])-1))
+                    pass
         #dump_to_file()
+
     return available, 0
 
 
-def learn(uid):
+def learn(uid,time_cost=-1):
     if len(user_info[uid]['on_learn']) == 0 and \
             len(user_info[uid]['unfin']) == 0 and \
             len(user_info[uid]['fin']) >= 0:
         finished(uid)
         return render.finished(uid,10)
         #return web.seeother('/')
+    if time_cost>0:
+        user_info[uid]['time_cost'].append(time_cost)
 
     if len(user_info[uid]['on_learn']) == 5:
         vvv = []
@@ -300,7 +318,7 @@ def finished(uid):
 
     group[gid]['fin_num'] += 1
     dump_to_file()
-    if group[gid]['fin_num'] == 4:
+    if group[gid]['fin_num'] == player_num:
         os.rename('result/dump.txt', 'result/dump.' + str(int(time.time())) + '.fin.txt')
         with open('result/dump.txt', 'w') as f:
             f.write('0')
@@ -382,7 +400,7 @@ class rest:
         user_group = group[user_info[data['uid']]['group']]['uid']
         # print user_group
 
-        if len(user_group) < 4:
+        if len(user_group) < player_num:
             return render.rest([[1, 2], [2, 3], [3, 4], [5, 6], [6, 7]], data['uid'], 10);
             pass
 
@@ -393,7 +411,8 @@ class rest:
             if jueged != len(user_info[var]['correct']):
                 return render.rest([[1, 2], [2, 3], [3, 4], [5, 6], [6, 7]], data['uid'], 3);
             total_score, current_score = score(user_info[var]['correct'])
-            score_all.append([var, current_score, total_score])
+            total_time, current_time = score(user_info[var]['time_cost'])
+            score_all.append([var, current_score, total_score, current_time, total_time])
 
         # print score_all
 
@@ -409,13 +428,17 @@ class rest:
                     # find max one
 
             rank_info += '[' + str(index) + ',' + "'" + last_one[0] + "'," + str(last_one[1]) + ',' + str(
-                last_one[2]) + '],'
+                last_one[2]) +  ',' + str(last_one[3]) +',' + str(last_one[4]) +'],'
             index += 1
             score_all.remove(last_one)
         # rank_info=str(rank_info)
         rank_info = rank_info[:-1] + ']'
 
         # print rank_info
+        if data['uid'] not in group[user_info[data['uid']]['group']]['visiable']:
+            total_score, current_score = score(user_info[data['uid']]['correct'])
+            total_time, current_time = score(user_info[data['uid']]['time_cost'])
+            rank_info="[['unseen','"+data['uid'] + "','" +str(current_score) + "','" + str(total_score) + "','" + str(current_time) + "','" + str(current_time) + "']]"
 
         return render.backward('nothing', rank_info, data['uid'], 15);
 
@@ -430,11 +453,14 @@ class next:
             return render.login()
 
         # print(data['uid'],data['voca_item'])
-
         for val in data:
             print(type(val), val, data[val])
 
-        return learn(data['uid'])
+        time_cost=-1
+        if 'time_cost' in data:
+            time_cost=int(data['time_cost'])
+
+        return learn(data['uid'],time_cost)
 
     def POST(self, name):  # special work for test
         # print('in post function name=',name)
