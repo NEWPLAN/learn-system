@@ -1,0 +1,101 @@
+$def with (uid,time_delay)
+
+<DOCTYPE html>  
+<html>  
+<head>
+<link rel="stylesheet" type="text/css" href="static/css/main.css"> 
+
+<meta charset="UTF-8">  
+<title>test</title>  
+</head>  
+<body>
+	<div>
+		
+	</div>
+
+<div id="main" class="main">
+
+    <!-- 头部信息 -->
+    <div class="body_header" >
+        <p style="display: table-cell; color:#FFFFFF;">Finished<div style="width:50%; height:40px; left:50%;top:18px; font-size: 20px; text-align: right; position:absolute; z-index:2">hello, $uid&nbsp;&nbsp;&nbsp;&nbsp;</div></p>
+    </div>
+
+    <!-- 身体信息 -->
+    <div id="bodysss" style="display: block; width: 100%; margin:auto; text-align:center;">
+    <div style="display: block; color:#FFFFFF;width: 100%; padding-top: 2%;padding-bottom: 2%; text-align: right;">
+        <marquee class='dynamic_notify'>Thanks for your cooperation, you have finished all the evaluation... Now, you may get a git from our stuff, please contact them for more information.</marquee>
+        </div>
+        <div style="display: block;width: 80%;height: 40px;"><!-- padding info will not display --></div>
+
+        <div class="form_info" style="font-size: 20px; width: 80%;height: 400px;margin-left: auto;margin-right: auto; visibility: visible;">
+            <div style="font-size: 20px; width: 80%;  margin-left: auto;margin-right: auto; visibility: visible; ">
+                 <div style="font-size: 20px; width: 80%; height: 60px;  margin-left: auto;margin-right: auto; visibility: visible; ">Thanks for your cooperation</div>
+                 <div style="font-size: 20px; width: 80%; height: 60px;  margin-left: auto;margin-right: auto; visibility: visible; text-align: left;">
+                 &nbsp;&nbsp;&nbsp;&nbsp;you have finished all the evaluation... 
+                Now, you may get a git from our stuff, please contact them for more information.
+                </div>
+                </br></br></br></br>
+                <div style="text-align: right; width: 90%;">thanks again!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            
+                <div style="display: block;width: 100%;height: 30px;"><!-- padding info will not display --></div>
+        </div>
+
+        
+        </div>
+        <button id="bton" disabled=true style="border:1px solid #CCC; background-color:#CCC; width: 30%; height: 40px; font-size: 20px;" onclick="this.disabled=true;submit_()">submit for your confirmation ( $time_delay s )</button>
+        <div style="display: block;width: 100%;height: 30px;"><!-- padding info will not display --></div>
+
+    </div>
+
+<script type="text/javascript">
+//setTimeout("submit();",3000);
+
+var myDate = new Date();
+
+var last_click=myDate.getTime();
+
+
+var letf_time=$time_delay;
+var origin_time=$time_delay;
+
+
+function enable_click(enabled) 
+{
+    document.getElementById('bton').disabled=enabled;
+}
+
+change_display();
+function change_display()
+{
+    if((origin_time -letf_time >= 2) && (letf_time>1))
+        enable_click(false)
+    else
+        enable_click(true)
+    document.getElementById('bton').innerHTML='submit for your confirmation ( '+letf_time+' s )';
+    if(--letf_time==-1)
+        submit_();
+    setTimeout("change_display()",1000);
+
+}
+
+
+
+function submit_() 
+{
+    //alert('going to submit form');
+    document.getElementById('bton').disabled=true;
+    window.location.href='/login'
+    // body...
+}
+
+
+</script>
+
+
+    <div id="foot_print" class="foot_print">
+        为了曹阳同学的毕业设计添砖加瓦！
+    </div>
+
+</div> 
+</body>  
+</html>

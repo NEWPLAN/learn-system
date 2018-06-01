@@ -106,7 +106,7 @@ function get_next()
         return;
 	var value = document.getElementById('true_voc').innerHTML;
 	console.log(value);
-	window.location.href='/next?voca_item='+value+'&uid='+'$uid';
+	window.location.href='/next?voca_item='+value+'&uid='+'$uid'+'&time_cost='+(origin_time-letf_time);
 }
 
 </script>
