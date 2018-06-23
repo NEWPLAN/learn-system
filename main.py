@@ -375,11 +375,11 @@ class indexhandler:
         pass
 
 class qahandler:
-    def GET(self):
-        print 'in qa'
+    def GET(self,name='Nothing'):
+        print 'in qa', name
         return render.qa(None,'yy',100)
     def POST(self,name='test'):
-        print 'in qa post'
+        print 'in qa post', name
         return render.qa(None,'yy',100)
 
 def score(L=[0, 0, 0, 0, 0], last_round=5):
