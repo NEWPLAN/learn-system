@@ -51,7 +51,7 @@ $def with (vocal_info,uid,time_delay)
         <div class="form_info" style="font-size: 20px; width: 80%;margin-left: auto;margin-right: auto; visibility: visible;">
 
         <form id="myForm" action="/qa" method="POST" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto; visibility: inherit;">
-            <div style="text-align: left;display: block">
+            <div id='qa_table' style="text-align: left;display: block">
                 <div style="text-align: left;display: block">
                     1.我宁愿做那些我做得好的事, 而不愿意做那些我做得差的事。
                 </div>
@@ -114,7 +114,7 @@ $def with (vocal_info,uid,time_delay)
             <div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>
 
             <div style="display: block;width: 100%;height: 60px;"><!-- padding info will not display --></div>
-			<div style="padding-top: 1%;"><input id="bton" disabled=true type="submit" value="提交答案( $time_delay s )" style="border:1px solid #CCC; background-color:#CCC; font-size: 20px; width: 40%; height: 40px;" />
+			<div style="padding-top: 1%;"><input id="bton" disabled=true type="submit" value="提交答案( $time_delay s )"        style="border:1px solid #CCC; background-color:#CCC; font-size: 20px; width: 40%; height: 40px;" />
 			</div>
 		</form>
         </div>
@@ -160,6 +160,46 @@ function submit_()
 }
 setTimeout("submit_()",$time_delay*1000);
 
+
+function draw_table()
+    {
+        var matrix=[
+                    '1.我宁愿做那些我做得好的事, 而不愿意做那些我做得差的事。',
+                    '2.对我来说，有机会做具有挑战性的工作是重要的。',
+                    '3.当我从事我知道自己不会出差错的事情时,我感到非常开心。',
+                    '4.如果不能完成某个有一定难度的任务, 那么在下次做此任务时我会更努力',
+                    '5. 我最喜爱的事, 是我做得最好的事。',
+                    '6. 我愿意做可以使我学到新东西的任务',
+                    '7.如果我做事不出任何差错, 我会觉得自己是聪明的。',
+                    '8.学习新东西的机会对我来说是重要的。',
+                    '9.我喜欢做那些我以前做得好的事。',
+                    '10.在以前经验的基础上, 我会尽可能地提高自己。',
+                    '11.如果我在某些事上比其他大多数人做得更好,我会觉得自己是聪明的。',
+                    '12.对我来说，提高能力的机会是重要的。'
+                ];
+		//alert(matrix.length);
+    	var row_num=matrix.length;
+
+    	var div1=document.getElementById("myForm");
+        var inner_txt='';
+        for(var item_num =0; item_num < row_num; item_num++)
+        {
+            inner_txt+='<div  style="text-align: left;display: block"> <div style="text-align: left;display: block">';
+            inner_txt+=matrix[item_num];
+            inner_txt+='</div><div style="display: block;width: 100%;height: 20px;"><!-- padding info will not display --></div><div style="text-align: left;display: block; font-weight:normal; padding-left: 20px;"><table border=\'0\' cellpadding=\'0\' cellspacing=\'0\' width=\'70%\'  style=\'text-align: center;margin-left: auto;margin-right: auto;\'>';
+            var rdid_info='';
+            for(var raid_index=1;raid_index<=7;raid_index++)
+            {
+                raid_info+='<td><label for="'+item_num+'_'+rain_index+'">'+rain_index+'</label><input type="radio" name="qa_'+item_num+'" id="'+item_num+'_'+rain_index+'" /> </td>';
+            }
+            inner_txt+=raid_info;
+            inner_txt+='</table> </div> </div><div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>';
+        }
+         div1.innerHTML=inner_txt;
+         print(inner_txt);
+         
+    }
+draw_table();
 </script>
 
 
