@@ -17,7 +17,7 @@ urls = (
     '/favicon.ico', 'icons',
     '/rest', 'rest',
     '/finished', '_finished',
-    '/qa', '_qa'
+    '/qa(.*)', 'qahandler'
 )
 app = web.application(urls, globals())
 render = web.template.render('templates/')
@@ -374,7 +374,7 @@ class indexhandler:
         return render.index()
         pass
 
-class _qa:
+class qahandler:
     def GET(self):
         print 'in qa'
         return render.qa(None,'yy',100)
