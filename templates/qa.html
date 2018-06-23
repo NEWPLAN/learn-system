@@ -134,18 +134,23 @@ var letf_time=$time_delay;
 var origin_time=$time_delay;
 
 
-function enable_click() 
+function enable_click(status) 
 {
-    document.getElementById('bton').disabled=false;
+    document.getElementById('bton').disabled=status;
     // body...
 }
 
-//setTimeout('enable_click()',5000);
+setTimeout('enable_click(false)',2000);
 change_display();
 function change_display()
 {
     document.getElementById('bton').value='提交答案( '+letf_time+' s )';
-    if(--letf_time==-10)
+    --letf_time;
+    if(letf_time<2)
+    {
+        enable_click(true);
+    }
+    if(letf_time==0)
         submit_();
     setTimeout("change_display()",1000);
 }
@@ -158,7 +163,7 @@ function submit_()
     document.getElementById("myForm").submit();
     // body...
 }
-setTimeout("submit_()",$time_delay*1000);
+//setTimeout("submit_()",$time_delay*1000);
 
 
 function draw_table()
