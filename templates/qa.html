@@ -197,6 +197,9 @@ function draw_table()
             inner_txt+=raid_info;
             inner_txt+='</table> </div> </div><div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>';
         }
+        {
+            inner_txt+='<div style="display: block;width: 100%;height: 60px;"><!-- padding info will not display --></div><div style="padding-top: 1%;"><input id="bton" disabled=true type="submit" value="提交答案( $time_delay s )"style="border:1px solid #CCC; background-color:#CCC; font-size: 20px; width: 40%; height: 40px;" /></div>';
+        }
          div1.innerHTML=inner_txt;
          print(inner_txt);
     } catch (err) 
