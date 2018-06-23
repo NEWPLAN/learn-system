@@ -306,7 +306,10 @@ function abc()
 function declare() 
 {
     clearTimeout(t);
-    msgbox('联合申明','<b>Dear friends</b>,</br></br>&nbsp;&nbsp;Welcome you join us for this survey and test. This is a declearing you may need to know before get ready for our test. This is a personal organization activity.</br></br>&nbsp;&nbsp;......</br></br>&nbsp;&nbsp;click the <i>right</i> button to <i>reject</i> and <b>left</b> button to <span style="color: red;">accept</span> it!','hidden_all(false);',1,1,'Warning');
+    var declare='亲爱的同学：您好！</br> &nbsp;&nbsp;欢迎参与“单词记忆”实验！</br>在本实验中，你将学习6组单词，每组5个单词。每组单词学习后，你将进入小测试——根据汉语释义写出单词。测试结束之后，系统会给予你一个反馈，告知你当前的表现以及在本组10个人中的排名情况。然后系统会提供一定的时间供您复习。所有单词学习完毕后，你需要完成一个大测验，对之前学习的所有单词进行回忆。所有界面均有最长停留时间限制，但你可以选择提前跳过。学习前后还有部分问卷需要您填写，请根据实际情况认真作答，所有数据仅作研究使用，请放心填写。
+'+
+    '</br></br>&nbsp;&nbsp;click the <i>right</i> button to <i>reject</i> and <b>left</b> button to <span style="color: red;">accept</span> it!';
+    msgbox('联合申明',declare,'hidden_all(false);',1,1,'Warning');
     // body...
 }
 
