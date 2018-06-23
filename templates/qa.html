@@ -50,7 +50,7 @@ $def with (vocal_info,uid,time_delay)
 
         <div class="form_info" style="font-size: 20px; width: 80%;margin-left: auto;margin-right: auto; visibility: visible;">
 
-        <form id="myForm" action="/qa" method="POST" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto; visibility: inherit;">
+        <form id="myForm" action="/qa" method="POST" onsubmit="return all_selected()" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto; visibility: inherit;">
             <div id='qa_table' style="text-align: left;display: block">
                 <div style="text-align: left;display: block">
                     1.我宁愿做那些我做得好的事, 而不愿意做那些我做得差的事。
@@ -160,8 +160,8 @@ function change_display()
 function submit_() 
 {
     //alert('going to submit form');
-    check_selected();
-    document.getElementById("myForm").submit();
+    //if(all_selected())
+        document.getElementById("myForm").submit();
     // body...
 }
 //setTimeout("submit_()",$time_delay*1000);
@@ -214,14 +214,23 @@ function draw_table()
     }
 }
 draw_table();
-function check_selected()
+function all_selected()
 {
     var item_select = document.getElementsByClassName('selected_item');
+    var unfin=[];
     for(var val_index=0;val_index< item_select.length;val_index)
     {
         if(!item_select[val_index].checked)
-        alert(val_index+'未完成选择！');
+        {
+            unfin.push(item_select+1);
+        }
     }
+    if(unfin.length>0)
+    {
+        alert(unfin.join(',')+'</br>未完成选择！');
+        return false;
+    }
+    return true;
 }
 </script>
 
