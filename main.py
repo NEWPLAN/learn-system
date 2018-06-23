@@ -24,7 +24,7 @@ render = web.template.render('templates/')
 vocas = []
 mutex = threading.Lock()
 
-player_num=9
+player_num=2
 
 
 def load_voca():
