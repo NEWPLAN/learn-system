@@ -43,8 +43,8 @@ $def with (vocal_info,uid,time_delay)
                     <td>6</td>
                     <td>7</td>
                 </tr>
-                <hr/>
             </table>
+            <hr/>
         </div>
         <div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>
 
@@ -52,20 +52,29 @@ $def with (vocal_info,uid,time_delay)
 
         <form id="myForm" action="/qa" method="POST" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto; visibility: inherit;">
             <div style="text-align: left;display: block">
+                <div style="text-align: left;display: block">
                     1.我宁愿做那些我做得好的事, 而不愿意做那些我做得差的事。
-                <label for="male_1">Male</label>
-                <input type="radio" name="sex" id="male_1" /> 
-                <label for="female_1">Female</label>
-                <input type="radio" name="sex" id="female_1" />
+                </div>
+                <div style="text-align: left;display: block">
+                    <label for="male_1">Male</label>
+                    <input type="radio" name="sex" id="male_1" /> 
+                    <label for="female_1">Female</label>
+                    <input type="radio" name="sex" id="female_1" />
+                </div>
             </div>
             <hr/>
             <div style="text-align: left;display: block">
-                    2.我宁愿做那些我做得好的事, 而不愿意做那些我做得差的事。
-                <label for="male_2">Male</label>
-                <input type="radio" name="sex" id="male_2" /> 
-                <label for="female_2">Female</label>
-                <input type="radio" name="sex" id="female_2" />
-            </div>
+                    <div style="text-align: left;display: block">
+                        2.我宁愿做那些我做得好的事, 而不愿意做那些我做得差的事。
+                    </div>
+                    <div style="text-align: left;display: block">
+                        <label for="male_3">Male</label>
+                        <input type="radio" name="sex" id="male_3" /> 
+                        <label for="female_3">Female</label>
+                        <input type="radio" name="sex" id="female_3" />
+                    </div>
+                </div>
+                <hr/>
 
             <div style="display: block;width: 100%;height: 60px;"><!-- padding info will not display --></div>
 			<div style="padding-top: 1%;"><input id="bton" disabled=true type="submit" value="提交答案( $time_delay s )" style="border:1px solid #CCC; background-color:#CCC; font-size: 20px; width: 40%; height: 40px;" />
