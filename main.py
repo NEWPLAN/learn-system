@@ -208,8 +208,7 @@ def batched_voca(nums=20):
     if all_nums == 0 or nums <= 0:
         return []
     
-    if nums<all_nums or nums<5:
-        print nums, all_nums
+    if all_nums < nums or nums<5:
         print ('system error in loading vocabulary, you need add more vocabulary before loading...')
     nums -= nums%5
 
