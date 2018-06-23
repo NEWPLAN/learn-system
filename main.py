@@ -1,13 +1,16 @@
 #encoding=utf-8
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+import os
 import threading
 import web
 import random
 import time
-import os
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+import io
+
 
 urls = (
     '/', 'indexhandler',
@@ -17,7 +20,8 @@ urls = (
     '/favicon.ico', 'icons',
     '/rest', 'rest',
     '/finished', '_finished',
-    '/qa(.*)', 'qahandler'
+    '/qa(.*)', 'qahandler',
+    '/tick(.*)', 'tickhandler'
 )
 app = web.application(urls, globals())
 render = web.template.render('templates/')
@@ -26,6 +30,14 @@ vocas = []
 mutex = threading.Lock()
 
 player_num=2
+
+
+def filter_encode(data_info={}):
+    res={}
+    for key in data_info:
+        res[key]=data_info[key].encode('utf-8')
+    return res
+
 
 
 def load_voca():
@@ -78,9 +90,15 @@ def dump_to_file(file_path='result/dump.txt'):
                 for v in user['correct']:
                     f.write(str(v) + '|')
                 f.write('&&&-')
-
+                          
                 for v in user['time_cost']:
                     f.write(str(v) + '|')
+                f.write('&&&-')
+
+                for v in user['qa_ans']:
+                    print v
+                    f.write(','.join([str(val) for val in v])+'|')
+
                 f.write('&&&-%d&&&-%d\n' % (user['group'], user['last_active']))
     mutex.release()
 
@@ -146,10 +164,19 @@ def load_from_dump(file_path='result/dump.txt'):
                         item.remove('')
                     new_info.append(item)
 
-                label = ['info', 'fin', 'unfin', 'on_learn', 'correct', 'time_cost', 'group', 'last_active']
+                label = ['info', 'fin', 'unfin', 'on_learn', 'correct', 'time_cost','qa_ans', 'group', 'last_active']
 
-                for index in range(0, len(label) - 2):
+                for index in range(0, len(label) - 3):
                     new_uid[label[index]] = new_info[index]
+
+                new_uid['qa_ans']=[]
+                for qa_ in new_info[len(label) - 3]:
+                    qqq = qa_.split(',')
+                    while '' in qqq:
+                        qqq.remove('')
+                    new_uid['qa_ans'].append([int(v) for v in qqq])
+
+                print new_uid['qa_ans']
 
                 new_uid['group'] = int(new_info[len(label) - 2][0])
                 new_uid['last_active'] = int(new_info[len(label) - 1][0])
@@ -195,8 +222,10 @@ def check_time_out():
 
         print 'time out and dump_to_file'
 
-        os.rename('result/dump.txt', 'result/dump.' + str(cur_timestap) + '.fin.txt')
-        with open('result/dump.txt', 'w') as f:
+        time_local = time.localtime(int(time.time()))
+        dt = time.strftime("%Y-%m-%d-%H-%M-%S",time_local)
+        os.rename('result/dump.txt', 'result/fin.dump.' + dt + '.txt')
+        with open('result/dump.txt', 'wb') as f:
             f.write('0')
     pass
 
@@ -251,7 +280,16 @@ def learn(uid,time_cost=-1):
     if len(user_info[uid]['on_learn']) == 0 and \
             len(user_info[uid]['unfin']) == 0 and \
             len(user_info[uid]['fin']) >= 0:
-        finished(uid)
+        #finished(uid)
+
+        qa_num=len(user_info[uid]['qa_ans'])
+        return render.qa(questionaire[qa_num][3],
+                    uid,
+                    20,
+                    questionaire[qa_num][0],
+                    questionaire[qa_num][1],
+                    questionaire[qa_num][2])
+        
         return render.finished(uid,10)
         #return web.seeother('/')
     if time_cost>0:
@@ -285,7 +323,7 @@ def unillegal(data={}):
     some_one_has_dead = False
     for uid in group[gid]['uid']:
         print cur_timestap - user_info[uid]['last_active']
-        if cur_timestap - user_info[uid]['last_active'] > 100:
+        if cur_timestap - user_info[uid]['last_active'] > 60:
             # default time-out is 3 min.
             some_one_has_dead = True
             break;
@@ -301,8 +339,11 @@ def unillegal(data={}):
         for user_item in user_info:
             print ('  ',user_item,'-------',user_info[user_item])
 
-        os.rename('result/dump.txt', 'result/dump.' + str(cur_timestap) + '.failed.txt')
-        with open('result/dump.txt', 'w') as f:
+    
+        time_local = time.localtime(cur_timestap)
+        dt = time.strftime("%Y-%m-%d-%H-%M-%S",time_local)
+        os.rename('result/dump.txt', 'result/failed.dump.' + dt + '.txt')
+        with open('result/dump.txt', 'wb') as f:
             f.write('0')
 
         return True
@@ -321,8 +362,10 @@ def finished(uid):
     group[gid]['fin_num'] += 1
     dump_to_file()
     if group[gid]['fin_num'] == player_num:
-        os.rename('result/dump.txt', 'result/dump.' + str(int(time.time())) + '.fin.txt')
-        with open('result/dump.txt', 'w') as f:
+        time_local = time.localtime(int(time.time()))
+        dt = time.strftime("%Y-%m-%d-%H-%M-%S",time_local)
+        os.rename('result/dump.txt', 'result/fin.dump.' + dt + '.txt')
+        with open('result/dump.txt', 'wb') as f:
             f.write('0')
         for uid in group[gid]['uid']:
             user_info.pop(uid)
@@ -330,6 +373,35 @@ def finished(uid):
 
     print group
     print user_info
+
+
+
+def load_qn():
+    question=[]
+    ret=[]
+    for qa_name in ['qa_1.txt','qa_2.txt','qa_3.txt','qa_4.txt','qa_5.txt']:
+        with io.open('materia/'+qa_name,'r',encoding='utf-8') as f:
+                all_data=f.read().encode('utf-8').split('&&&&')
+                while '' in all_data:
+                    all_data.remove('')
+                question=[var.split('----')[1] for var in all_data]
+                res= question[3].split('\n')
+                while '' in res:
+                    res.remove('')
+                    pass
+                notify=question[2].replace(' ','').replace('\n','').replace('\r','').split(',')
+                while '' in notify:
+                    notify.remove('')
+                ret.append([
+                question[0].replace(' ','').replace('\n','').replace('\r',''),
+                question[1].replace(' ','').replace('\n','').replace('\r',''),
+                '[\''+'\',\''.join(notify)+'\']',
+                '[\''+'\',\''.join(res)+'\']'
+                ])
+    return ret
+
+
+questionaire=load_qn()
 
 
 class login:
@@ -343,7 +415,7 @@ class login:
     def POST(self, name=None):
         check_time_out()
 
-        data = web.input();
+        data = filter_encode(web.input());
 
         if user_info.has_key(data['uid']):
             return ('already in recorded, choose another username...')
@@ -351,6 +423,7 @@ class login:
             user_info[data['uid']] = {
                 'info': [data['uid'], data['maj'], data['age'], data['grad'], data['gend']],
                 'fin': [], 'unfin': [], 'on_learn': [], 'correct': [], 'time_cost': [], 'group': -1,
+                'qa_ans':[],
                 'last_active': int(time.time())
             }
         res, gid = check_and_add_user(data['uid'])
@@ -359,7 +432,14 @@ class login:
             user_info[data['uid']]['unfin'] += group[gid]['voca']
             user_info[data['uid']]['last_active'] = int(time.time())
             dump_to_file()
-            return learn(data['uid']);
+            current_qn=len(user_info[data['uid']]['qa_ans'])
+            return render.qa(questionaire[current_qn][3],
+            data['uid'],
+            20,
+            questionaire[current_qn][0],
+            questionaire[current_qn][1],
+            questionaire[current_qn][2])
+            #return learn(data['uid']);
         user_info.pop(data['uid'])
         #dump_to_file()
         return 'this batch is fulled, please wait for next batch!'
@@ -374,15 +454,61 @@ class indexhandler:
         return render.index()
         pass
 
+class tickhandler:
+    def GET(self,name=None):
+        data = filter_encode(web.input())
+        print data['uid']
+        if unillegal(data):
+            return render.login()
+        return 'hello, '+data['uid']
+
+    def POST(self,name=None):
+        #print 'from client'
+        return 'hello'
+        pass
+
 class qahandler:
     def GET(self,name='Nothing'):
-        print 'in qa', name
-        return render.qa(None,'yy',20)
+        return render.login()
+
+
     def POST(self,name='test'):
+
         print 'in qa post', name
-        data = web.input()
-        print data
-        return render.qa(None,'yy',20)
+        data = filter_encode(web.input())
+        qa=[]
+
+        for key in data:
+            print key, data[key]
+        for index in range(0,len(data)-1):
+            key = 'qa_'+str(index)
+            qa.append(int(data[key]))
+        user_info[data['uid']]['qa_ans'].append(qa)
+
+        dump_to_file()
+
+        qa_num=len(user_info[data['uid']]['qa_ans'])
+
+        if qa_num==1:
+            return render.qa(questionaire[qa_num][3],
+                data['uid'],
+                20,
+                questionaire[qa_num][0],
+                questionaire[qa_num][1],
+                questionaire[qa_num][2])
+        elif qa_num ==5:
+            finished(data['uid'])
+            return render.finished(data['uid'],10)
+            pass
+        elif qa_num >2 and qa_num<5 and len(user_info[data['uid']]['unfin']) == 0:
+            return render.qa(questionaire[qa_num][3],
+                data['uid'],
+                20,
+                questionaire[qa_num][0],
+                questionaire[qa_num][1],
+                questionaire[qa_num][2])
+        else:
+            return learn(data['uid']);
 
 def score(L=[0, 0, 0, 0, 0], last_round=5):
     total_score = 0
@@ -401,26 +527,28 @@ class rest:
         return web.seeother('/');
 
     def POST(self, name=None):
-        data = web.input()
+        data = filter_encode(web.input())
 
         if unillegal(data):
             # print('unillegal user info')
             return render.login()
 
-        # print data['uid']
-        user_group = group[user_info[data['uid']]['group']]['uid']
+        data_uid=data['uid']
+
+
+        user_group = group[user_info[data_uid]['group']]['uid']
         # print user_group
 
         if len(user_group) < player_num:
-            return render.rest([[1, 2], [2, 3], [3, 4], [5, 6], [6, 7]], data['uid'], 10);
+            return render.rest([[1, 2], [2, 3], [3, 4], [5, 6], [6, 7]], data_uid, 10);
             pass
 
-        jueged = len(user_info[data['uid']]['correct'])
+        jueged = len(user_info[data_uid]['correct'])
         score_all = []
 
         for var in user_group:
             if jueged != len(user_info[var]['correct']):
-                return render.rest([[1, 2], [2, 3], [3, 4], [5, 6], [6, 7]], data['uid'], 3);
+                return render.rest([[1, 2], [2, 3], [3, 4], [5, 6], [6, 7]], data_uid, 3);
             total_score, current_score = score(user_info[var]['correct'])
             total_time, current_time = score(user_info[var]['time_cost'])
             score_all.append([var, current_score, total_score, current_time, total_time])
@@ -446,18 +574,18 @@ class rest:
         rank_info = rank_info[:-1] + ']'
 
         # print rank_info
-        if data['uid'] not in group[user_info[data['uid']]['group']]['visiable']:
-            total_score, current_score = score(user_info[data['uid']]['correct'])
-            total_time, current_time = score(user_info[data['uid']]['time_cost'])
-            rank_info="[['unseen','"+data['uid'] + "','" +str(current_score) + "','" + str(total_score) + "','" + str(current_time) + "','" + str(current_time) + "']]"
+        if data_uid not in group[user_info[data_uid]['group']]['visiable']:
+            total_score, current_score = score(user_info[data_uid]['correct'])
+            total_time, current_time = score(user_info[data_uid]['time_cost'])
+            rank_info="[['unseen','"+data_uid + "','" +str(current_score) + "','" + str(total_score) + "','" + str(current_time) + "','" + str(total_time) + "']]"
 
-        return render.backward('nothing', rank_info, data['uid'], 15);
+        return render.backward('nothing', rank_info, data_uid, 15);
 
 
 class next:
     def GET(self, name):
         # print(name)
-        data = web.input()
+        data = filter_encode(web.input())
 
         if unillegal(data):
             # print('unillegal user info')
@@ -475,67 +603,49 @@ class next:
 
     def POST(self, name):  # special work for test
         # print('in post function name=',name)
-        data = web.input();
+        data = filter_encode(web.input())
 
         if unillegal(data):
             # print('unillegal user info')
             return render.login()
 
-        # print type(data['voc_1'].encode("utf-8")), data['voc_1'],'-----', vocas[user_info[data['uid']]['on_learn'][0]]
-        # print type(data['voc_1'].encode("utf-8")), data['voc_2'],'-----', vocas[user_info[data['uid']]['on_learn'][1]]
-        # print type(data['voc_1'].encode("utf-8")), data['voc_3'],'-----', vocas[user_info[data['uid']]['on_learn'][2]]
-        # print type(data['voc_1'].encode("utf-8")), data['voc_4'],'-----', vocas[user_info[data['uid']]['on_learn'][3]]
-        # print type(data['voc_1'].encode("utf-8")), data['voc_5'],'-----', vocas[user_info[data['uid']]['on_learn'][4]]
-
-        # print(data['uid'].encode("utf-8"))
-
         current_score = 0
-        if data['voc_1'] == vocas[user_info[data['uid']]['on_learn'][0]][0]:
-            user_info[data['uid']]['correct'].append(1)
-            current_score += 1
-        else:
-            user_info[data['uid']]['correct'].append(0)
+        data_uid=data['uid']
 
-        if data['voc_2'] == vocas[user_info[data['uid']]['on_learn'][1]][0]:
-            user_info[data['uid']]['correct'].append(1)
-            current_score += 1
-        else:
-            user_info[data['uid']]['correct'].append(0)
-
-        if data['voc_3'] == vocas[user_info[data['uid']]['on_learn'][2]][0]:
-            user_info[data['uid']]['correct'].append(1)
-            current_score += 1
-        else:
-            user_info[data['uid']]['correct'].append(0)
-
-        if data['voc_4'] == vocas[user_info[data['uid']]['on_learn'][3]][0]:
-            user_info[data['uid']]['correct'].append(1)
-            current_score += 1
-        else:
-            user_info[data['uid']]['correct'].append(0)
-
-        if data['voc_5'] == vocas[user_info[data['uid']]['on_learn'][4]][0]:
-            user_info[data['uid']]['correct'].append(1)
-            current_score += 1
-        else:
-            user_info[data['uid']]['correct'].append(0)
+        try:
+            for index in range(0,5):
+                voc='voc_'+str(index+1)
+                print voc
+                if data[voc] == vocas[user_info[data_uid]['on_learn'][index]][0]:
+                    user_info[data_uid]['correct'].append(1)
+                    current_score += 1
+                else:
+                    user_info[data_uid]['correct'].append(0)
+        except Exception as e:
+            print data
+            #print vocas
+            print user_info,
+            print data_uid,
+            print index
+            print e
+            exit(-1)
 
         total_score = 0
-        for var in user_info[data['uid']]['correct']:
+        for var in user_info[data_uid]['correct']:
             total_score += var
 
         # print current_score,'-----', total_score
 
-        voca_id = user_info[data['uid']]['on_learn'][-1];
+        voca_id = user_info[data_uid]['on_learn'][-1];
 
-        user_info[data['uid']]['fin'] += user_info[data['uid']]['on_learn'];
-        del user_info[data['uid']]['on_learn'][:];
+        user_info[data_uid]['fin'] += user_info[data_uid]['on_learn'];
+        del user_info[data_uid]['on_learn'][:];
 
         # print(user_info[data['uid']])
 
         dump_to_file()
 
-        return render.rest([[1, 2], [2, 3], [3, 4], [5, 6], [6, 7]], data['uid'], 2)
+        return render.rest([[1, 2], [2, 3], [3, 4], [5, 6], [6, 7]], data_uid, 2)
 
 
 class icons:

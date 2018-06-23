@@ -161,6 +161,32 @@ function get_next()
 
 </script>
 
+<script type="text/javascript">
+function tick()
+{
+    console.log('tick');
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            console.log('from server: ',xmlhttp.responseText);
+        }
+    }
+    xmlhttp.open("GET","/tick?uid=$uid",true);
+    xmlhttp.send();
+}
+setInterval("tick()",20000);
+</script>
+
 
     <div id="foot_print" class="foot_print">
         为了曹阳同学的毕业设计添砖加瓦！

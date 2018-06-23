@@ -1,4 +1,4 @@
-$def with (vocal_info,uid,time_delay)
+$def with (question_naire,uid,time_delay,title,describe,notify)
 
 <DOCTYPE html>  
 <html>  
@@ -17,13 +17,12 @@ $def with (vocal_info,uid,time_delay)
 
     <!-- 头部信息 -->
     <div class="body_header" >
-        <p style="display: table-cell; color:#FFFFFF;">问卷1：成就目标定向量表<div style="width:50%; height:40px; left:50%;top:18px; font-size: 20px; text-align: right; position:absolute; z-index:2">hello, $uid&nbsp;&nbsp;&nbsp;&nbsp;</div></p>
+        <p style="display: table-cell; color:#FFFFFF;">$title<div style="width:50%; height:40px; left:50%;top:18px; font-size: 20px; text-align: right; position:absolute; z-index:2">hello, $uid&nbsp;&nbsp;&nbsp;&nbsp;</div></p>
     </div>
 
     <!-- 身体信息 -->
     <div id="bodysss" style="display: block; height: 73%; width: 100%; margin:auto; text-align:center;">
-    <div style="display: block; width: 100%; padding-top: 2%;padding-bottom: 2%; text-align: left; font-size: 20px;">
-        请根据自己的实际情况，选择相应的答案。每个题目只选择一个答案，请不要多选或漏选，有七个候选项，每个候选项的分为不同等级，具体如下：</br>
+    <div id="notify" style="display: block; width: 100%; padding-top: 2%;padding-bottom: 2%; text-align: left; font-size: 20px;">$describe</br>
             <table border='0' cellpadding='0' cellspacing='0' width='70%'  style='text-align: center;margin-left: auto;margin-right: auto;'>
                 <tr>
                     <td>完全不同意</td>
@@ -50,7 +49,7 @@ $def with (vocal_info,uid,time_delay)
 
         <div class="form_info" style="font-size: 20px; width: 80%;margin-left: auto;margin-right: auto; visibility: visible;">
 
-        <form id="myForm" action="/qa" method="POST" onsubmit="return all_selected()" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto; visibility: inherit;">
+        <form id="myForm" action="/qa" method="POST" onsubmit="return all_selected(this)" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto; visibility: inherit;">
             <div id='qa_table' style="text-align: left;display: block">
                 <div style="text-align: left;display: block">
                     1.我宁愿做那些我做得好的事, 而不愿意做那些我做得差的事。
@@ -89,31 +88,7 @@ $def with (vocal_info,uid,time_delay)
                     </table>
                 </div>
             </div>
-            <div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>
-            <div style="text-align: left;display: block">
-                    <div style="text-align: left;display: block">
-                        2.对我来说，有机会做具有挑战性的工作是重要的。
-                    </div>
-                    <div style="text-align: left;display: block; font-size: 20px;font-weight:normal; text-align: center;">
-                        <label for="1_1">1</label>
-                        <input type="radio" name="2" id="1_1" /> 
-                        <label for="1_2">2</label>
-                        <input type="radio" name="2" id="1_2" />
-                        <label for="1_3">3</label>
-                        <input type="radio" name="2" id="1_3" /> 
-                        <label for="1_4">4</label>
-                        <input type="radio" name="2" id="1_4" />
-                        <label for="1_5">5</label>
-                        <input type="radio" name="2" id="1_5" /> 
-                        <label for="1_6">6</label>
-                        <input type="radio" name="2" id="1_6" />
-                        <label for="1_7">7</label>
-                        <input type="radio" name="2" id="1_5" /> 
-                    </div>
-                </div>
-            <div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>
 
-            <div style="display: block;width: 100%;height: 60px;"><!-- padding info will not display --></div>
 			<div style="padding-top: 1%;"><input id="bton" disabled=true type="submit" value="提交答案( $time_delay s )"        style="border:1px solid #CCC; background-color:#CCC; font-size: 20px; width: 40%; height: 40px;" />
 			</div>
 		</form>
@@ -141,7 +116,8 @@ function enable_click(status)
 }
 
 setTimeout('enable_click(false)',2000);
-change_display();
+//change_display();
+
 function change_display()
 {
     document.getElementById('bton').value='提交答案( '+letf_time+' s )';
@@ -159,34 +135,24 @@ function change_display()
 
 function submit_() 
 {
-    //alert('going to submit form');
     if(all_selected())
+    {
+        enable_click(true);
         document.getElementById("myForm").submit();
-    // body...
+    }
 }
-//setTimeout("submit_()",$time_delay*1000);
 
+var qa_number=0;
+var cell_num=7;
 
 function draw_table()
 {
     try 
     {
-        var matrix=[
-                    '1.我宁愿做那些我做得好的事, 而不愿意做那些我做得差的事。',
-                    '2.对我来说，有机会做具有挑战性的工作是重要的。',
-                    '3.当我从事我知道自己不会出差错的事情时,我感到非常开心。',
-                    '4.如果不能完成某个有一定难度的任务, 那么在下次做此任务时我会更努力',
-                    '5. 我最喜爱的事, 是我做得最好的事。',
-                    '6. 我愿意做可以使我学到新东西的任务',
-                    '7.如果我做事不出任何差错, 我会觉得自己是聪明的。',
-                    '8.学习新东西的机会对我来说是重要的。',
-                    '9.我喜欢做那些我以前做得好的事。',
-                    '10.在以前经验的基础上, 我会尽可能地提高自己。',
-                    '11.如果我在某些事上比其他大多数人做得更好,我会觉得自己是聪明的。',
-                    '12.对我来说，提高能力的机会是重要的。'
-                ];
-		//alert(matrix.length);
+		var matrix= $:question_naire;
     	var row_num=matrix.length;
+
+        qa_number=row_num;
 
     	var div1=document.getElementById("myForm");
         var inner_txt='';
@@ -196,12 +162,12 @@ function draw_table()
             inner_txt+=matrix[item_num];
             inner_txt+='</div><div style="display: block;width: 100%;height: 20px;"><!-- padding info will not display --></div><div style="text-align: left;display: block; font-weight:normal; padding-left: 20px;"><table border=\'0\' cellpadding=\'0\' cellspacing=\'0\' width=\'70%\'  style=\'text-align: center;margin-left: auto;margin-right: auto;\'>';
             var raid_info='';
-            for(var raid_index=1;raid_index<=7;raid_index++)
+            for(var raid_index=1;raid_index<=cell_num;raid_index++)
             {
                 raid_info+='<td><label for="'+item_num+'_'+raid_index+'">'+raid_index+'</label><input type="radio" name="qa_'+item_num+'" id="'+item_num+'_'+raid_index+'" value="'+raid_index+'" class="selected_item" /> </td>';
             }
             inner_txt+=raid_info;
-            inner_txt+='</table> </div> </div><div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>';
+            inner_txt+='<tr style="display: none;"><td><input class="input_label" type="hidden"  name="uid" value="$uid" /></td></tr></table> </div> </div><div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>';
         }
         {
             inner_txt+='<div style="display: block;width: 100%;height: 60px;"><!-- padding info will not display --></div><div style="padding-top: 1%;"><input id="bton" disabled=true type="submit" value="提交答案( $time_delay s )"style="border:1px solid #CCC; background-color:#CCC; font-size: 20px; width: 40%; height: 40px;" /></div>';
@@ -213,25 +179,104 @@ function draw_table()
         console.log(err);
     }
 }
+
+
+function draw_notify()
+{
+    try 
+    {
+        var matrix= $:notify;
+        var row_num=matrix.length;
+        cell_num=row_num;
+
+        var div1=document.getElementById("notify");
+        var inner_txt='';
+        inner_txt+='$describe';
+        inner_txt+='</br></br></br><table border=\'0\' cellpadding=\'0\' cellspacing=\'0\' width=\'70%\'  style=\'text-align: center;margin-left: auto;margin-right: auto;\'><tr>';
+        for(var item_num =0; item_num < row_num; item_num++)
+        {
+            inner_txt+='<td width="'+Math.floor(100/row_num)+'%">'+matrix[item_num]+'</td>';
+        }
+        inner_txt+='</tr><tr>';
+        for(var item_num =0; item_num < row_num; item_num++)
+        {
+            inner_txt+='<td width="'+Math.floor(100/row_num)+'%">'+(item_num+1)+'</td>';
+        }
+        
+        inner_txt+='</tr></table><hr/></div>';
+        div1.innerHTML=inner_txt;
+        //console.log(inner_txt);
+
+    } catch (err) 
+    {
+        console.log(err);
+    }
+}
+draw_notify();
 draw_table();
+
 function all_selected()
 {
-    var item_select = document.getElementsByClassName('selected_item');
-    var unfin=[];
-    for(var val_index=0;val_index< item_select.length;val_index)
+	console.log('at first');
+	var unfin=[];
+    //var item_select = document.getElementsByClassName('selected_item');
+    for(var index=0;index<qa_number;index++)
     {
-        if(!item_select[val_index].checked)
-        {
-            unfin.push(item_select+1);
-        }
+    	var item_select = document.getElementsByName('qa_'+index);
+
+	    console.log('qa_'+index);
+	    console.log(item_select.length);
+
+	    var is_selected=false;
+
+	    for(var val_index=0;val_index< item_select.length; val_index++)
+	    {
+	        if((item_select[val_index].checked))
+	        {
+	        	is_selected=true;
+	        	break;
+	        }
+	    }
+	    if(!is_selected)
+	    	unfin.push(index+1);
     }
+    console.log('before');
+    console.log(unfin);
     if(unfin.length>0)
     {
-        alert(unfin.join(',')+'</br>未完成选择！');
-        return false;
+    	alert(unfin.join(', ')+'\n未完成选择！');
+    	return false;
     }
+    console.log('after');
     return true;
 }
+
+</script>
+
+<script type="text/javascript">
+function tick()
+{
+    console.log('tick');
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            console.log('from server: ',xmlhttp.responseText);
+        }
+    }
+    xmlhttp.open("GET","/tick?uid=$uid",true);
+    xmlhttp.send();
+}
+setInterval("tick()",20000);
 </script>
 
 

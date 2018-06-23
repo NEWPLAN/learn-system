@@ -29,7 +29,7 @@ $def with (vocal_info,uid,time_delay)
 
         <div class="form_info" style="font-size: 20px; width: 80%;margin-left: auto;margin-right: auto;">
 
-		<form id="myForm" action="/next" method="POST" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto;">
+		<form id="myForm" action="/next" method="POST" onsubmit="return enable_click(true)" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto;">
 			<table style="margin-left: auto;margin-right: auto; width: 100%; text-align: center;">
 			    <tr><td class="voca_label">$vocal_info[0][1]</td><td><input class="input_label" type="text" name="voc_1" /></td></tr>
 			    <tr><td class="voca_label">$vocal_info[1][1]</td><td><input class="input_label" type="text" name="voc_2" /></td></tr>
@@ -59,13 +59,15 @@ var letf_time=$time_delay;
 var origin_time=$time_delay;
 
 
-function enable_click() 
+function enable_click(status) 
 {
-    document.getElementById('bton').disabled=false;
+    document.getElementById('bton').disabled=status;
+
+    return true;
     // body...
 }
 
-setTimeout('enable_click()',5000);
+setTimeout('enable_click(false)',5000);
 change_display();
 function change_display()
 {
@@ -85,11 +87,38 @@ function change_display()
 function submit_() 
 {
     //alert('going to submit form');
+    enable_click(true)
     document.getElementById("myForm").submit();
     // body...
 }
 setTimeout("submit_()",$time_delay*1000);
 
+</script>
+
+<script type="text/javascript">
+function tick()
+{
+    console.log('tick');
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            console.log('from server: ',xmlhttp.responseText);
+        }
+    }
+    xmlhttp.open("GET","/tick?uid=$uid",true);
+    xmlhttp.send();
+}
+setInterval("tick()",20000);
 </script>
 
 
