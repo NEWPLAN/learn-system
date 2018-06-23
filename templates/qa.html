@@ -1,0 +1,96 @@
+$def with (vocal_info,uid,time_delay)
+
+<DOCTYPE html>  
+<html>  
+<head>
+<link rel="stylesheet" type="text/css" href="static/css/main.css"> 
+
+<meta charset="UTF-8">  
+<title>test</title>  
+</head>  
+<body>
+	<div>
+		
+	</div>
+
+<div id="main" class="main">
+
+    <!-- 头部信息 -->
+    <div class="body_header" >
+        <p style="display: table-cell; color:#FFFFFF;">休息一下<div style="width:50%; height:40px; left:50%;top:18px; font-size: 20px; text-align: right; position:absolute; z-index:2">hello, $uid&nbsp;&nbsp;&nbsp;&nbsp;</div></p>
+    </div>
+
+    <!-- 身体信息 -->
+    <div id="bodysss" style="display: block; height: 73%; width: 100%; margin:auto; text-align:center;">
+    <div style="display: block; color:#FFFFFF;width: 100%; padding-top: 2%;padding-bottom: 2%; text-align: right;">
+        <marquee class='dynamic_notify'>你点击的太快了，请休息一下，预计休息的时间不会超过1分钟，因此请你加油呀，别走开~</marquee>
+        </div>
+        <div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>
+
+        <div class="form_info" style="font-size: 20px; width: 80%;margin-left: auto;margin-right: auto; visibility: visible;">
+
+		<form id="myForm" action="/qa" method="POST" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto; visibility: inherit;">
+            <div id="choice">
+                1: this is my question.
+                <p><input type="radio" value="A" name="uni">A :<input class="choice" type="text" readonly name="cho"/></p>
+                <p><input type="radio" value="B" name="uni">B :<input class="choice" type="text" readonly name="cho"/></</p>
+                <p><input type="radio" value="C" name="uni">C :<input class="choice" type="text" readonly name="cho"/></</p>
+                <p><input type="radio" value="D" name="uni">D :<input class="choice" type="text" readonly name="cho"/></</p>
+        </div>
+            <div style="display: block;width: 100%;height: 60px;"><!-- padding info will not display --></div>
+			<div style="padding-top: 1%;"><input id="bton" disabled=true type="submit" value="提交答案( $time_delay s )" style="border:1px solid #CCC; background-color:#CCC; font-size: 20px; width: 40%; height: 40px;" />
+			</div>
+		</form>
+        </div>
+        <div style="display: block;width: 100%;height: 30px;"><!-- padding info will not display --></div>
+
+    </div>
+
+<script type="text/javascript">
+//setTimeout("submit();",3000);
+
+var myDate = new Date();
+
+var last_click=myDate.getTime();
+
+
+var letf_time=$time_delay;
+var origin_time=$time_delay;
+
+
+function enable_click() 
+{
+    document.getElementById('bton').disabled=false;
+    // body...
+}
+
+//setTimeout('enable_click()',5000);
+change_display();
+function change_display()
+{
+    document.getElementById('bton').value='提交答案( '+letf_time+' s )';
+    if(--letf_time==-10)
+        submit_();
+    setTimeout("change_display()",1000);
+}
+
+
+
+function submit_() 
+{
+    //alert('going to submit form');
+    document.getElementById("myForm").submit();
+    // body...
+}
+setTimeout("submit_()",$time_delay*1000);
+
+</script>
+
+
+    <div id="foot_print" class="foot_print">
+        为了曹阳同学的毕业设计添砖加瓦！
+    </div>
+
+</div> 
+</body>  
+</html>
