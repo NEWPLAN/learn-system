@@ -376,8 +376,10 @@ class indexhandler:
 
 class _qa:
     def GET(self):
+        print 'in qa'
         return render.qa(None,'yy',100)
     def POST(self,name='test'):
+        print 'in qa post'
         return render.qa(None,'yy',100)
 
 def score(L=[0, 0, 0, 0, 0], last_round=5):
