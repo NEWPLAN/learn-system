@@ -1,0 +1,139 @@
+$def with (vocal_info,uid,time_delay)
+
+<DOCTYPE html>  
+<html>  
+<head>
+<link rel="stylesheet" type="text/css" href="static/css/main.css"> 
+
+<meta charset="UTF-8">  
+<title>test</title>  
+</head>  
+<body>
+	<div>
+		
+	</div>
+
+<div id="main" class="main">
+
+    <!-- 头部信息 -->
+    <div class="body_header" >
+        <p style="display: table-cell; color:#FFFFFF;">复习单词<div style="width:50%; height:40px; left:50%;top:18px; font-size: 20px; text-align: right; position:absolute; z-index:2">hello, $uid&nbsp;&nbsp;&nbsp;&nbsp;</div></p>
+    </div>
+
+    <!-- 身体信息 -->
+    <div id="bodysss" style="display: block; width: 100% margin:auto; text-align:center;">
+    <div style="display: block; width: 100%; padding-top: 2%;padding-bottom: 2%; text-align: center;">
+        复习所学的单词
+        </div>
+        <div style="display: block;width: 100%;height: 40px;"><!-- padding info will not display --></div>
+
+        <div class="form_info" style="font-size: 20px; width: 80%;margin-left: auto;margin-right: auto; visibility: visible;">
+
+		<form id="myForm" action="/rest" method="POST" onclick="return submit_()" autocomplete="off" style="width: 80%; margin-left: auto;margin-right: auto; visibility: inherit;">
+			<table style="margin-left: auto;margin-right: auto; width: 100%; text-align: center;">
+			    <tr>
+				    <td class="voca_label" width="30%">$vocal_info[0][0]</td>
+				    <td class="input_label" width="70%">$vocal_info[0][1]</td>
+			    </tr>
+			    <tr>
+				    <td class="voca_label" width="30%">$vocal_info[1][0]</td>
+				    <td class="input_label" width="70%">$vocal_info[1][1]</td>
+			    </tr>
+			    <tr>
+				    <td class="voca_label" width="30%">$vocal_info[2][0]</td>
+				    <td class="input_label" width="70%">$vocal_info[2][1]</td>
+			    </tr>
+			    <tr>
+				    <td class="voca_label" width="30%">$vocal_info[3][0]</td>
+				    <td class="input_label" width="70%">$vocal_info[3][1]</td>
+			    </tr>
+			    <tr>
+				    <td class="voca_label" width="30%">$vocal_info[4][0]</td>
+				    <td class="input_label" width="70%">$vocal_info[4][1]</td>
+			    </tr>
+                <tr style="display: none;"><td class="voca_label">extra info</td><td><input class="input_label" type="hidden"  name="uid" value="$uid" /></td></tr>
+			</table>
+            <div style="display: block;width: 100%;height: 60px;"><!-- padding info will not display --></div>
+			<div style="padding-top: 1%;"><input id="bton" disabled=true type="submit" value="查看排名( $time_delay s )" style="border:1px solid #CCC; background-color:#CCC; font-size: 20px; width: 40%; height: 40px;" />
+			</div>
+		</form>
+        </div>
+        <div style="display: block;width: 100%;height: 30px;"><!-- padding info will not display --></div>
+
+    </div>
+
+<script type="text/javascript">
+//setTimeout("submit();",3000);
+
+var myDate = new Date();
+
+var last_click=myDate.getTime();
+
+
+var letf_time=$time_delay;
+var origin_time=$time_delay;
+
+
+function enable_click() 
+{
+    document.getElementById('bton').disabled=false;
+    // body...
+}
+
+setTimeout('enable_click()',2000);
+change_display();
+function change_display()
+{
+    document.getElementById('bton').value='查看排名( '+letf_time+' s )';
+    if(--letf_time==0)
+        submit_();
+    setTimeout("change_display()",1000);
+}
+
+
+
+function submit_() 
+{
+    //alert('going to submit form');
+    document.getElementById('bton').disabled=true;
+    document.getElementById("myForm").submit();
+    // body...
+}
+//setTimeout("submit_()",$time_delay*1000);
+
+</script>
+
+<script type="text/javascript">
+function tick()
+{
+    console.log('tick');
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            console.log('from server: ',xmlhttp.responseText);
+        }
+    }
+    xmlhttp.open("GET","/tick?uid=$uid",true);
+    xmlhttp.send();
+}
+setInterval("tick()",20000);
+</script>
+
+
+    <div id="foot_print" class="foot_print">
+        为了曹阳同学的毕业设计添砖加瓦！
+    </div>
+
+</div> 
+</body>  
+</html>

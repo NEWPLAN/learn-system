@@ -1,4 +1,5 @@
-#encoding=utf-8
+#! usr/env/bin python
+# -*-encoding:utf-8-*-
 
 import sys
 reload(sys)
@@ -21,7 +22,8 @@ urls = (
     '/rest', 'rest',
     '/finished', '_finished',
     '/qa(.*)', 'qahandler',
-    '/tick(.*)', 'tickhandler'
+    '/tick(.*)', 'tickhandler',
+    '/finaltest(.*)','_final_test'
 )
 app = web.application(urls, globals())
 render = web.template.render('templates/')
@@ -29,7 +31,7 @@ render = web.template.render('templates/')
 vocas = []
 mutex = threading.Lock()
 
-player_num=2
+player_num=10
 
 
 def filter_encode(data_info={}):
@@ -208,7 +210,8 @@ def check_time_out():
 
         if one_group.has_key('uid'):
             for uid in one_group['uid']:
-                if cur_timestap - user_info[uid]['last_active']>60:
+                if (cur_timestap - user_info[uid]['last_active']>60) and len(user_info[uid]['qa_ans'])<5:
+                    print uid , 'time out'
                     user_offline.append(True)
                 else:
                     user_offline.append(False)
@@ -220,14 +223,27 @@ def check_time_out():
 
         group[0] = {}
 
-        print 'time out and dump_to_file'
+        print 'time out and dump_to_file success'
 
         time_local = time.localtime(int(time.time()))
         dt = time.strftime("%Y-%m-%d-%H-%M-%S",time_local)
         os.rename('result/dump.txt', 'result/fin.dump.' + dt + '.txt')
         with open('result/dump.txt', 'wb') as f:
             f.write('0')
-    pass
+    elif len(user_offline)>0 and True in user_offline:
+        dump_to_file()
+        for uid in group[0]['uid']:
+            user_info.pop(uid)
+
+        group[0] = {}
+
+        print 'time out and dump_to_file failed'
+
+        time_local = time.localtime(int(time.time()))
+        dt = time.strftime("%Y-%m-%d-%H-%M-%S",time_local)
+        os.rename('result/dump.txt', 'result/failed.dump.' + dt + '.txt')
+        with open('result/dump.txt', 'wb') as f:
+            f.write('0')
 
 
 def batched_voca(nums=20):
@@ -303,12 +319,13 @@ def learn(uid,time_cost=-1):
 
         return render.test(vvv, uid, 30)
 
-    this_index = random.randint(0, len(user_info[uid]['unfin']) - 1)
+    #this_index = random.randint(0, len(user_info[uid]['unfin']) - 1)
+    this_index=0
     this_var = user_info[uid]['unfin'][this_index]
     user_info[uid]['on_learn'].append(this_var)
     user_info[uid]['unfin'].remove(this_var)
     dump_to_file()
-    return render.learn(vocas[this_var], 10, uid);
+    return render.learn(vocas[this_var], 30, uid);
 
 
 def unillegal(data={}):
@@ -323,8 +340,8 @@ def unillegal(data={}):
     some_one_has_dead = False
     for uid in group[gid]['uid']:
         print cur_timestap - user_info[uid]['last_active']
-        if cur_timestap - user_info[uid]['last_active'] > 60:
-            # default time-out is 3 min.
+        if (cur_timestap - user_info[uid]['last_active'] > 60) and len(user_info[uid]['qa_ans'])<5:
+            # default time-out is 1 min.
             some_one_has_dead = True
             break;
 
@@ -435,7 +452,7 @@ class login:
             current_qn=len(user_info[data['uid']]['qa_ans'])
             return render.qa(questionaire[current_qn][3],
             data['uid'],
-            20,
+            30,
             questionaire[current_qn][0],
             questionaire[current_qn][1],
             questionaire[current_qn][2])
@@ -467,6 +484,20 @@ class tickhandler:
         return 'hello'
         pass
 
+class _final_test:
+    def GET(self,name=None):
+        return render.login()
+
+    def POST(self,name=None):
+        data = filter_encode(web.input())
+        for var in data:
+            print var, data[var]
+        with open('result/answer_'+data['uid']+str(time.time()),'wb') as f:
+            for var in data:
+                f.write(var+'---'+data[var]+'\n')
+
+        return render.finished(data['uid'],10)
+
 class qahandler:
     def GET(self,name='Nothing'):
         return render.login()
@@ -492,18 +523,21 @@ class qahandler:
         if qa_num==1:
             return render.qa(questionaire[qa_num][3],
                 data['uid'],
-                20,
+                30,
                 questionaire[qa_num][0],
                 questionaire[qa_num][1],
                 questionaire[qa_num][2])
         elif qa_num ==5:
+            review = [vocas[var] for var in user_info[data['uid']]['fin']]
             finished(data['uid'])
-            return render.finished(data['uid'],10)
+            return render.final_test(review,data['uid'],50*60)
+
+            #return render.finished(data['uid'],10)
             pass
         elif qa_num >2 and qa_num<5 and len(user_info[data['uid']]['unfin']) == 0:
             return render.qa(questionaire[qa_num][3],
                 data['uid'],
-                20,
+                30,
                 questionaire[qa_num][0],
                 questionaire[qa_num][1],
                 questionaire[qa_num][2])
@@ -524,17 +558,16 @@ def score(L=[0, 0, 0, 0, 0], last_round=5):
 
 class rest:
     def GET(self, name=None):
+        #return render.review([[2,'中华人民</br>共和国'], [3,'中华国'], ['interesting','adj. 有趣的小东西----/static/materia/horse.mp3'], [5, 6], [6, 7]], 'xiaohua', 1000);
         return web.seeother('/');
 
     def POST(self, name=None):
         data = filter_encode(web.input())
 
         if unillegal(data):
-            # print('unillegal user info')
             return render.login()
 
         data_uid=data['uid']
-
 
         user_group = group[user_info[data_uid]['group']]['uid']
         # print user_group
@@ -567,19 +600,20 @@ class rest:
                     # find max one
 
             rank_info += '[' + str(index) + ',' + "'" + last_one[0] + "'," + str(last_one[1]) + ',' + str(
-                last_one[2]) +  ',' + str(last_one[3]) +',' + str(last_one[4]) +'],'
+                last_one[2]) +  ',' + '"不可见"' +',' + '"不可见"' +'],'
             index += 1
             score_all.remove(last_one)
         # rank_info=str(rank_info)
         rank_info = rank_info[:-1] + ']'
 
-        # print rank_info
-        if data_uid not in group[user_info[data_uid]['group']]['visiable']:
-            total_score, current_score = score(user_info[data_uid]['correct'])
-            total_time, current_time = score(user_info[data_uid]['time_cost'])
-            rank_info="[['unseen','"+data_uid + "','" +str(current_score) + "','" + str(total_score) + "','" + str(current_time) + "','" + str(total_time) + "']]"
 
-        return render.backward('nothing', rank_info, data_uid, 15);
+        # unseen to some one...
+        # if data_uid not in group[user_info[data_uid]['group']]['visiable']:
+        #     total_score, current_score = score(user_info[data_uid]['correct'])
+        #     total_time, current_time = score(user_info[data_uid]['time_cost'])
+        #     rank_info="[['unseen','"+data_uid + "','" +str(current_score) + "','" + str(total_score) + "','" + str(current_time) + "','" + str(total_time) + "']]"
+
+        return render.backward('nothing', rank_info, data_uid, 30);
 
 
 class next:
@@ -638,6 +672,7 @@ class next:
 
         voca_id = user_info[data_uid]['on_learn'][-1];
 
+        review = [vocas[var] for var in user_info[data_uid]['on_learn']]
         user_info[data_uid]['fin'] += user_info[data_uid]['on_learn'];
         del user_info[data_uid]['on_learn'][:];
 
@@ -645,7 +680,9 @@ class next:
 
         dump_to_file()
 
-        return render.rest([[1, 2], [2, 3], [3, 4], [5, 6], [6, 7]], data_uid, 2)
+        return render.review(review, data_uid, 30)
+
+        #return render.rest([[1, 2], [2, 3], [3, 4], [5, 6], [6, 7]], data_uid, 2)
 
 
 class icons:
