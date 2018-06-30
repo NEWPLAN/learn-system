@@ -21,7 +21,7 @@ $def with (vocal_info,uid,time_delay)
     </div>
 
     <!-- 身体信息 -->
-    <div id="bodysss" style="display: block; width: 100% margin:auto; text-align:center;">
+    <div id="bodysss" style="display: block; width: 100%; margin:auto; text-align:center;">
     <div style="display: block; width: 100%; padding-top: 2%;padding-bottom: 2%; text-align: center;">
         请在对应的释义后写出对应的单词，限时 $time_delay 秒
         </div>
@@ -31,12 +31,7 @@ $def with (vocal_info,uid,time_delay)
 
 		<form id="myForm" action="/finaltest" method="POST" onsubmit="return enable_click(true)" autocomplete="off" style="width: 80%;height: 60%;margin-left: auto;margin-right: auto;">
 			<table id="mytable" style="margin-left: auto;margin-right: auto; width: 100%; text-align: center;">
-
-			    <tr><td class="voca_label">$vocal_info[0][1]</td><td><input class="input_label" type="text" name="voc_1" /></td></tr>
-			    <tr><td class="voca_label">$vocal_info[1][1]</td><td><input class="input_label" type="text" name="voc_2" /></td></tr>
-			    <tr><td class="voca_label">$vocal_info[2][1]</td><td><input class="input_label" type="text" name="voc_3" /></td></tr>
-			    <tr><td class="voca_label">$vocal_info[3][1]</td><td><input class="input_label" type="text" name="voc_4" /></td></tr>
-			    <tr><td class="voca_label">$vocal_info[4][1]</td><td><input class="input_label" type="text" name="voc_5" /></td></tr>
+			    
                 <tr style="display: none;"><td class="voca_label">extra info</td><td><input class="input_label" type="hidden"  name="uid" value="$uid" /></td></tr>
 
 
@@ -102,6 +97,7 @@ function draw_table()
     try 
     {
         var matrix= $:vocal_info;
+        console.log(matrix)
         var row_num=matrix.length;
 
         qa_number=row_num;
@@ -155,7 +151,7 @@ function tick()
 
 
     <div id="foot_print" class="foot_print">
-        为了曹阳同学的毕业设计添砖加瓦！
+        单词记忆学习测试系统
     </div>
 
 </div> 

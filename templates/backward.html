@@ -19,7 +19,7 @@ $def with (voca_info,rank_info,uid,time_delay)
     <div class="body_header" >评价反馈<div style="width:50%; height:40px; left:50%;top:18px; font-size: 20px; text-align: right; position:absolute; z-index:2">hello, $uid&nbsp;&nbsp;&nbsp;&nbsp;</div></div>
 
     <!-- 身体信息 -->
-    <div id="bodysss" style="display: block; width: 100% margin:auto; height: 600px; ">
+    <div id="bodysss" style="display: block; width: 100%; margin:auto; height: 600px; ">
         
         <div style="display: block;width: 100%;">
             
@@ -134,15 +134,15 @@ function get_next()
 	        tab+="<td class='table_meta'><b>排名信息</b></td>";
 	        tab+="<td class='table_meta'><b>用户信息</b></td>";
 	        tab+="<td class='table_meta'><b>本次正确</b></td>";
-	        tab+="<td class='table_meta'><b>全部正确</b></td>";
-            tab+="<td class='table_meta'><b>本次耗时</b></td>";
-            tab+="<td class='table_meta'><b>全部耗时</b></td>";
+	        //tab+="<td class='table_meta'><b>全部正确</b></td>";
+            // tab+="<td class='table_meta'><b>本次耗时</b></td>";
+            // tab+="<td class='table_meta'><b>全部耗时</b></td>";
         tab+="</tr>";
         tab+="<hr/>";
         for (var row=0;row<matrix.length;row++)
         {
         	tab+="<tr>";
-        	for (var col=0;col<matrix[row].length; col++)
+        	for (var col=0;col<matrix[row].length-3; col++)
         	{
         		tab+="<td class='table_cell'";
                 if(row%2==0)
@@ -189,7 +189,7 @@ setInterval("tick()",20000);
 
 
     <div id="foot_print" class="foot_print">
-        为了曹阳同学的毕业设计添砖加瓦！
+        单词记忆学习测试系统
     </div>
 
 </div> 
